@@ -432,8 +432,11 @@ export const LIGHT_COLORS = {
 /** Backward-compat alias — existing code importing COLORS gets dark palette. */
 export const COLORS = DARK_COLORS
 
+/** Union of both palettes — use as the param type for theme-aware draw functions. */
+export type ColorPalette = typeof DARK_COLORS | typeof LIGHT_COLORS
+
 /** Returns the correct palette for the current theme. */
-export function getColors(isDark: boolean) {
+export function getColors(isDark: boolean): ColorPalette {
   return isDark ? DARK_COLORS : LIGHT_COLORS
 }
 
@@ -447,7 +450,7 @@ export const ROLE_COLORS: Record<string, { bg: string; bgSelected: string; text:
 
 // ─── Color Helper Functions ──────────────────────────────────────────────────
 
-export function getStateColor(state: AgentState, colors: typeof DARK_COLORS = DARK_COLORS): string {
+export function getStateColor(state: AgentState, colors: ColorPalette = DARK_COLORS): string {
   switch (state) {
     case 'idle': return colors.idle
     case 'thinking': return colors.thinking
@@ -459,7 +462,7 @@ export function getStateColor(state: AgentState, colors: typeof DARK_COLORS = DA
   }
 }
 
-export function getDiscoveryTypeColor(type: string, colors: typeof DARK_COLORS = DARK_COLORS): string {
+export function getDiscoveryTypeColor(type: string, colors: ColorPalette = DARK_COLORS): string {
   switch (type) {
     case 'file': return colors.discoveryFile
     case 'pattern': return colors.discoveryPattern
@@ -474,7 +477,7 @@ export function withAlpha(rgbaBase: string, alpha: number): string {
 }
 
 /** Build the context-breakdown color segments for a given breakdown. */
-export function contextSegments(bd: ContextBreakdown, colors: typeof DARK_COLORS = DARK_COLORS) {
+export function contextSegments(bd: ContextBreakdown, colors: ColorPalette = DARK_COLORS) {
   return [
     { value: bd.systemPrompt, color: colors.contextSystem },
     { value: bd.userMessages, color: colors.contextUser },

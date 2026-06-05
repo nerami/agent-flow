@@ -1,5 +1,5 @@
 import { ToolCallNode } from '@/lib/agent-types'
-import { COLORS, withAlpha } from '@/lib/colors'
+import { DARK_COLORS, type ColorPalette, withAlpha } from '@/lib/colors'
 import { TOOL_MAX_CARD_W, TOOL_DRAW } from '@/lib/canvas-constants'
 import { truncateText } from './draw-misc'
 import { measureTextCached } from './render-cache'
@@ -8,7 +8,8 @@ export function drawToolCalls(
   ctx: CanvasRenderingContext2D,
   toolCalls: Map<string, ToolCallNode>,
   time: number,
-  selectedToolCallId?: string | null,
+  selectedToolCallId: string | null | undefined,
+  colors: ColorPalette,
 ) {
   for (const [id, tool] of toolCalls) {
     const isRunning = tool.state === 'running'
@@ -31,19 +32,19 @@ export function drawToolCalls(
 
     // Error glow
     if (isError) {
-      ctx.shadowColor = COLORS.error
+      ctx.shadowColor = colors.error
       ctx.shadowBlur = TOOL_DRAW.errorGlowBase + Math.sin(time * 6) * TOOL_DRAW.errorGlowPulse
     }
 
     ctx.beginPath()
     ctx.roundRect(cardX, cardY, cardW, cardH, TOOL_DRAW.borderRadius)
     ctx.fillStyle = isError
-      ? withAlpha(COLORS.toolCardErrorBase, 0.8 * pulse)
-      : isSelected ? withAlpha(COLORS.toolCardSelectedBase, 0.15 * pulse) : withAlpha(COLORS.toolCardBase, 0.7 * pulse)
+      ? withAlpha(colors.toolCardErrorBase, 0.8 * pulse)
+      : isSelected ? withAlpha(colors.toolCardSelectedBase, 0.15 * pulse) : withAlpha(colors.toolCardBase, 0.7 * pulse)
     ctx.fill()
     ctx.strokeStyle = isError
-      ? COLORS.error + '90'
-      : isSelected ? COLORS.holoBase + 'aa' : isRunning ? COLORS.tool + '60' : COLORS.return + '40'
+      ? colors.error + '90'
+      : isSelected ? colors.holoBase + 'aa' : isRunning ? colors.tool + '60' : colors.return + '40'
     ctx.lineWidth = isError ? 2 : isSelected ? 1.5 : 1
     ctx.stroke()
 
@@ -53,7 +54,7 @@ export function drawToolCalls(
     if (isRunning) {
       ctx.beginPath()
       ctx.arc(tool.x, tool.y, Math.max(cardW, cardH) / 2 + TOOL_DRAW.spinRingPadding, time * TOOL_DRAW.spinSpeed, time * TOOL_DRAW.spinSpeed + TOOL_DRAW.spinArc)
-      ctx.strokeStyle = COLORS.tool + '50'
+      ctx.strokeStyle = colors.tool + '50'
       ctx.lineWidth = 1.5
       ctx.stroke()
     }
@@ -61,7 +62,7 @@ export function drawToolCalls(
     // Crack lines for errors
     if (isError) {
       ctx.save()
-      ctx.strokeStyle = COLORS.error + '40'
+      ctx.strokeStyle = colors.error + '40'
       ctx.lineWidth = 0.8
       for (let i = 0; i < 3; i++) {
         const a = (i / 3) * Math.PI * 2 + 0.5
@@ -80,21 +81,21 @@ export function drawToolCalls(
     ctx.textBaseline = 'middle'
 
     if (isRunning) {
-      ctx.fillStyle = COLORS.tool
+      ctx.fillStyle = colors.tool
       ctx.fillText(truncatedLabel, tool.x, tool.y)
     } else if (isError) {
-      ctx.fillStyle = COLORS.error
+      ctx.fillStyle = colors.error
       ctx.fillText(truncateText(ctx, `${tool.toolName}: FAILED`, cardW - 8), tool.x, tool.y - TOOL_DRAW.twoLineOffset)
       ctx.font = `${TOOL_DRAW.errorFontSize}px monospace`
-      ctx.fillStyle = COLORS.error + 'aa'
+      ctx.fillStyle = colors.error + 'aa'
       ctx.fillText(truncateText(ctx, tool.errorMessage || tool.result || '', cardW - 8), tool.x, tool.y + TOOL_DRAW.twoLineOffset + 2)
     } else {
       // Completed card: show action + file path (most useful info at a glance)
-      ctx.fillStyle = COLORS.return
+      ctx.fillStyle = colors.return
       ctx.fillText(truncatedLabel, tool.x, tool.y - TOOL_DRAW.twoLineOffset)
       if (tool.tokenCost) {
         // Token cost as dim text below
-        ctx.fillStyle = COLORS.tool + '90'
+        ctx.fillStyle = colors.tool + '90'
         ctx.font = `${TOOL_DRAW.tokenFontSize}px monospace`
         ctx.fillText(`${tool.tokenCost} tok`, tool.x, tool.y + TOOL_DRAW.twoLineOffset + 2)
       }

@@ -3,6 +3,7 @@ import { SOUND_PREF_KEY } from '@/lib/canvas-constants'
 import { AudioEngine } from '@/lib/audio-engine'
 import type { Agent, ToolCallNode } from '@/lib/agent-types'
 import { detectStateChanges } from '@/components/agent-visualizer/canvas/detect-state-changes'
+import { DARK_COLORS } from '@/lib/colors'
 
 export function useAudioEffects(
   agents: Map<string, Agent>,
@@ -37,6 +38,7 @@ export function useAudioEffects(
     const { transitions, newAgentStates, newToolStates } = detectStateChanges(
       agents, toolCalls,
       prevAgentStatesRef.current, prevToolStatesRef.current,
+      DARK_COLORS,
     )
     prevAgentStatesRef.current = newAgentStates
     prevToolStatesRef.current = newToolStates

@@ -3,7 +3,7 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { Agent, Particle, Edge, Discovery, DepthParticle } from '@/lib/agent-types'
 import type { SimulationState } from '@/hooks/simulation/types'
-import { getStateColor } from '@/lib/colors'
+import { getStateColor, getColors, DARK_COLORS, type ColorPalette } from '@/lib/colors'
 import { ANIM_SPEED, PERF_OVERLAY, PERF_OVERLAY_ENABLED } from '@/lib/canvas-constants'
 import { BloomRenderer } from './bloom-renderer'
 import { createDepthParticles, updateDepthParticles, drawBackground } from './background-layer'
@@ -22,6 +22,7 @@ import {
 } from './canvas/index'
 import { useCanvasCamera } from '@/hooks/use-canvas-camera'
 import { useCanvasInteraction } from '@/hooks/use-canvas-interaction'
+import { useTheme } from '@/hooks/use-theme'
 
 interface CanvasProps {
   /** Ref to simulation state — read every frame without React re-renders */
@@ -85,6 +86,10 @@ export function AgentCanvas({
     edgeMap: Map<string, Edge>
   }>({ particles: [], edges: [], activeEdgeIds: new Set(), edgeMap: new Map() })
 
+  const { isDark } = useTheme()
+  const colorsRef = useRef<ColorPalette>(getColors(isDark))
+  colorsRef.current = getColors(isDark)
+
   // ─── Stable refs for animation loop & event handlers ────────────────────
   // Simulation data (agents, particles, etc.) is synced from simulationRef
   // at the top of each draw frame, so it's always fresh even without re-renders.
@@ -98,6 +103,7 @@ export function AgentCanvas({
     onAgentDrag, onAgentClick, onAgentHover, onContextMenu,
     onToolCallClick, onDiscoveryClick,
     isDragging: prev?.isDragging ?? false,
+    colors: colorsRef.current,
   })
   const drawPropsRef = useRef(makeDrawProps())
   drawPropsRef.current = makeDrawProps(drawPropsRef.current)
@@ -155,6 +161,7 @@ export function AgentCanvas({
     const { effects, newAgentStates, newToolStates } = detectStateChangesPure(
       agents, toolCalls,
       prevAgentStatesRef.current, prevToolStatesRef.current,
+      colorsRef.current,
     )
     effectsRef.current.push(...effects)
     prevAgentStatesRef.current = newAgentStates
@@ -193,7 +200,7 @@ export function AgentCanvas({
         selectedAgentId, hoveredAgentId, showStats, showHexGrid,
         showCostOverlay, selectedToolCallId, selectedDiscoveryId,
         simTime, pauseAutoFit, dimensions, onAgentDrag,
-        isDragging,
+        isDragging, colors,
       } = drawPropsRef.current
       const transform = transformRef.current
 
@@ -241,12 +248,12 @@ export function AgentCanvas({
       let activeAgentPos: { x: number; y: number; color: string } | undefined
       for (const [, agent] of agents) {
         if (agent.state === 'thinking' || agent.state === 'tool_calling' || agent.state === 'waiting_permission') {
-          activeAgentPos = { x: agent.x, y: agent.y, color: getStateColor(agent.state) }
+          activeAgentPos = { x: agent.x, y: agent.y, color: getStateColor(agent.state, colorsRef.current) }
           break
         }
       }
 
-      drawBackground(ctx, w, h, depthParticlesRef.current, transform, showHexGrid, timeRef.current, activeAgentPos)
+      drawBackground(ctx, w, h, depthParticlesRef.current, transform, showHexGrid, timeRef.current, activeAgentPos, colors)
 
       ctx.save()
       ctx.translate(transform.x, transform.y)
@@ -265,24 +272,24 @@ export function AgentCanvas({
         edgeLookupCacheRef.current = { particles, edges, activeEdgeIds, edgeMap }
       }
 
-      drawDiscoveryConnections(ctx, discoveries, agents)
-      drawEdges(ctx, edges, agents, toolCalls, activeEdgeIds, timeRef.current)
-      drawToolCalls(ctx, toolCalls, timeRef.current, selectedToolCallId)
-      drawDiscoveries(ctx, discoveries, agents, selectedDiscoveryId)
-      drawAgents(ctx, agents, selectedAgentId, hoveredAgentId, showStats, timeRef.current)
-      drawMessageBubblesWorld(ctx, agents, simTimeRef.current)
-      if (showCostOverlay) drawCostLabels(ctx, agents, toolCalls)
-      drawParticles(ctx, particles, edgeMap, agents, toolCalls, timeRef.current)
-      drawEffects(ctx, effectsRef.current)
+      drawDiscoveryConnections(ctx, discoveries, agents, colors)
+      drawEdges(ctx, edges, agents, toolCalls, activeEdgeIds, timeRef.current, colors)
+      drawToolCalls(ctx, toolCalls, timeRef.current, selectedToolCallId, colors)
+      drawDiscoveries(ctx, discoveries, agents, selectedDiscoveryId, colors)
+      drawAgents(ctx, agents, selectedAgentId, hoveredAgentId, showStats, timeRef.current, colors)
+      drawMessageBubblesWorld(ctx, agents, simTimeRef.current, colors)
+      if (showCostOverlay) drawCostLabels(ctx, agents, toolCalls, colors)
+      drawParticles(ctx, particles, edgeMap, agents, toolCalls, timeRef.current, colors)
+      drawEffects(ctx, effectsRef.current, colors)
 
       if (selectedAgentId) {
         const agent = agents.get(selectedAgentId)
-        if (agent) drawTetherLine(ctx, agent, transform, h)
+        if (agent) drawTetherLine(ctx, agent, transform, h, colors)
       }
 
       ctx.restore()
 
-      if (showCostOverlay) drawCostSummaryPanel(ctx, agents, toolCalls)
+      if (showCostOverlay) drawCostSummaryPanel(ctx, agents, toolCalls, colors)
       if (bloomRef.current) bloomRef.current.apply(canvas, ctx)
 
       // ─── Performance overlay (enabled via ?perf or ?stress) ──────────

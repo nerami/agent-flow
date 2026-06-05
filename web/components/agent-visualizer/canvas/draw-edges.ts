@@ -1,5 +1,5 @@
 import { Agent, ToolCallNode, Particle, Edge, BEAM, ANIM } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import { alphaHex } from '@/lib/utils'
 import { MIN_VISIBLE_OPACITY } from '@/lib/canvas-constants'
 
@@ -105,6 +105,7 @@ export function drawEdges(
   toolCalls: Map<string, ToolCallNode>,
   activeEdgeIds: Set<string>,
   time: number,
+  colors: ColorPalette,
 ) {
   for (const edge of edges) {
     const fromAgent = agents.get(edge.from)
@@ -123,7 +124,7 @@ export function drawEdges(
     if (!cp) continue
     const { cp1x, cp1y, cp2x, cp2y } = cp
 
-    const beamColor = edge.type === 'tool' ? COLORS.tool : COLORS.holoBase
+    const beamColor = edge.type === 'tool' ? colors.tool : colors.holoBase
     const bw = edge.type === 'tool' ? BEAM.tool : BEAM.parentChild
 
     ctx.save()

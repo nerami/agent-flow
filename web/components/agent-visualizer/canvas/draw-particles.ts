@@ -1,5 +1,5 @@
 import { Agent, ToolCallNode, Particle, Edge, BEAM, FX } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import { PARTICLE_DRAW } from '@/lib/canvas-constants'
 import { alphaHex } from '@/lib/utils'
 import { bezierPoint, resolveEdgeTarget, computeControlPoints } from './draw-edges'
@@ -19,6 +19,7 @@ export function drawParticles(
   agents: Map<string, Agent>,
   toolCalls: Map<string, ToolCallNode>,
   time: number,
+  colors: ColorPalette,
 ) {
   for (const particle of particles) {
     const edge = edgeMap.get(particle.edgeId)
@@ -82,7 +83,7 @@ export function drawParticles(
     ctx.arc(px, py, particle.size, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
-    ctx.fillStyle = COLORS.holoHot + '80'
+    ctx.fillStyle = colors.holoHot + '80'
     ctx.arc(px, py, particle.size * PARTICLE_DRAW.coreHighlightScale, 0, Math.PI * 2)
     ctx.fill()
 

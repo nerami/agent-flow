@@ -1,6 +1,6 @@
 import type { Agent, ToolCallNode } from '@/lib/agent-types'
 import { FX } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import type { VisualEffect } from './draw-effects'
 
 /** A semantic state transition detected between frames. */
@@ -26,6 +26,7 @@ export function detectStateChanges(
   toolCalls: Map<string, ToolCallNode>,
   prevAgentStates: Map<string, string>,
   prevToolStates: Map<string, string>,
+  colors: ColorPalette,
 ): {
   effects: VisualEffect[]
   transitions: StateTransition[]
@@ -47,7 +48,7 @@ export function detectStateChanges(
       if (agent.opacity < 0.5) {
         effects.push({
           type: 'spawn', x: agent.x, y: agent.y,
-          color: COLORS.holoBase, age: 0, duration: FX.spawnDuration,
+          color: colors.holoBase, age: 0, duration: FX.spawnDuration,
         })
       }
     }
@@ -57,7 +58,7 @@ export function detectStateChanges(
       transitions.push({ kind: 'agent_complete' })
       effects.push({
         type: 'complete', x: agent.x, y: agent.y,
-        color: COLORS.complete, age: 0, duration: FX.completeDuration,
+        color: colors.complete, age: 0, duration: FX.completeDuration,
       })
     }
   }
@@ -84,7 +85,7 @@ export function detectStateChanges(
       }
       effects.push({
         type: 'shatter', x: tool.x, y: tool.y,
-        color: COLORS.return, age: 0, duration: FX.shatterDuration,
+        color: colors.return, age: 0, duration: FX.shatterDuration,
         particles: particleData,
       })
     }

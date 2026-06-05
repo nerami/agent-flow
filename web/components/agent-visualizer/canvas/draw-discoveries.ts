@@ -1,16 +1,16 @@
 import { Agent, Discovery } from '@/lib/agent-types'
-import { COLORS, getDiscoveryTypeColor } from '@/lib/colors'
+import { DARK_COLORS, type ColorPalette, getDiscoveryTypeColor } from '@/lib/colors'
 import { getDiscoveryCardDimensions } from '@/lib/canvas-constants'
 import { truncateText } from './draw-misc'
 
-export function drawDiscoveryConnections(ctx: CanvasRenderingContext2D, discoveries: Discovery[], agents: Map<string, Agent>) {
+export function drawDiscoveryConnections(ctx: CanvasRenderingContext2D, discoveries: Discovery[], agents: Map<string, Agent>, colors: ColorPalette) {
   for (const disc of discoveries) {
     const agent = agents.get(disc.agentId)
     if (!agent || disc.opacity < 0.1) continue
 
     ctx.save()
     ctx.globalAlpha = disc.opacity * 0.3
-    ctx.strokeStyle = COLORS.holoBase + '30'
+    ctx.strokeStyle = colors.holoBase + '30'
     ctx.lineWidth = 0.5
     ctx.setLineDash([3, 5])
     ctx.beginPath()
@@ -22,7 +22,7 @@ export function drawDiscoveryConnections(ctx: CanvasRenderingContext2D, discover
   }
 }
 
-export function drawDiscoveries(ctx: CanvasRenderingContext2D, discoveries: Discovery[], agents: Map<string, Agent>, selectedDiscoveryId?: string | null) {
+export function drawDiscoveries(ctx: CanvasRenderingContext2D, discoveries: Discovery[], agents: Map<string, Agent>, selectedDiscoveryId: string | null | undefined, colors: ColorPalette) {
   for (const disc of discoveries) {
     if (disc.opacity < 0.05) continue
 
@@ -38,10 +38,10 @@ export function drawDiscoveries(ctx: CanvasRenderingContext2D, discoveries: Disc
 
     ctx.beginPath()
     ctx.roundRect(cardX, cardY, cardW, cardH, 3)
-    ctx.fillStyle = isSelected ? COLORS.cardBgSelected : COLORS.cardBg
+    ctx.fillStyle = isSelected ? colors.cardBgSelected : colors.cardBg
     ctx.fill()
 
-    const typeColor = getDiscoveryTypeColor(disc.type)
+    const typeColor = getDiscoveryTypeColor(disc.type, colors)
 
     // Selection glow
     if (isSelected) {
@@ -68,7 +68,7 @@ export function drawDiscoveries(ctx: CanvasRenderingContext2D, discoveries: Disc
     ctx.textBaseline = 'top'
     ctx.fillText(truncateText(ctx, disc.label, cardW - 10), cardX + 6, cardY + 3)
 
-    ctx.fillStyle = COLORS.textMuted
+    ctx.fillStyle = colors.textMuted
     ctx.font = '7px monospace'
     for (let i = 0; i < lines.length; i++) {
       ctx.fillText(truncateText(ctx, lines[i], cardW - 10), cardX + 6, cardY + 14 + i * 11)

@@ -1,5 +1,5 @@
 import { Agent, NODE, CARD, TETHER } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import { measureTextCached } from './render-cache'
 
 /** Truncate text with ellipsis to fit within maxWidth pixels */
@@ -14,7 +14,7 @@ export function truncateText(ctx: CanvasRenderingContext2D, text: string, maxWid
   return lo > 0 ? text.slice(0, lo) + '\u2026' : '\u2026'
 }
 
-export function drawTetherLine(ctx: CanvasRenderingContext2D, agent: Agent, transform: { x: number; y: number; scale: number }, canvasH: number) {
+export function drawTetherLine(ctx: CanvasRenderingContext2D, agent: Agent, transform: { x: number; y: number; scale: number }, canvasH: number, colors: ColorPalette) {
   const r = agent.isMain ? NODE.radiusMain : NODE.radiusSub
 
   // Match the detail card's fixed middle-left position (glass-card.tsx)
@@ -32,7 +32,7 @@ export function drawTetherLine(ctx: CanvasRenderingContext2D, agent: Agent, tran
 
   ctx.save()
   ctx.globalAlpha = TETHER.alpha
-  ctx.strokeStyle = COLORS.holoBase + TETHER.strokeAlpha
+  ctx.strokeStyle = colors.holoBase + TETHER.strokeAlpha
   ctx.lineWidth = TETHER.lineWidth
   ctx.setLineDash(TETHER.dash)
   ctx.beginPath()
@@ -45,7 +45,7 @@ export function drawTetherLine(ctx: CanvasRenderingContext2D, agent: Agent, tran
 
   // Dot at the end
   ctx.beginPath()
-  ctx.fillStyle = COLORS.holoBase + '90'
+  ctx.fillStyle = colors.holoBase + '90'
   ctx.arc(endX, endY, TETHER.dotRadius, 0, Math.PI * 2)
   ctx.fill()
   ctx.restore()

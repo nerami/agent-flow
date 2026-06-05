@@ -1,5 +1,5 @@
 import { Agent, ToolCallNode, NODE } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import { COST_RATE, COST_DRAW, COST_PANEL, MIN_VISIBLE_OPACITY } from '@/lib/canvas-constants'
 import { formatTokens } from '@/lib/utils'
 import { truncateText } from './draw-misc'
@@ -9,12 +9,12 @@ export function agentCost(tokensUsed: number): number {
 }
 
 /** Tool name -> color for mini cost bar */
-export function toolTypeColor(toolName: string): string {
+export function toolTypeColor(toolName: string, colors: ColorPalette): string {
   const n = toolName.toLowerCase()
-  if (n.includes('read') || n.includes('glob') || n.includes('grep')) return COLORS.contextUser
-  if (n.includes('edit') || n.includes('write')) return COLORS.contextReasoning
-  if (n.includes('bash')) return COLORS.tool
-  return COLORS.contextSubagent
+  if (n.includes('read') || n.includes('glob') || n.includes('grep')) return colors.contextUser
+  if (n.includes('edit') || n.includes('write')) return colors.contextReasoning
+  if (n.includes('bash')) return colors.tool
+  return colors.contextSubagent
 }
 
 /** Pre-group tool calls by agentId to avoid O(agents * toolCalls) per frame */
@@ -33,6 +33,7 @@ export function drawCostLabels(
   ctx: CanvasRenderingContext2D,
   agents: Map<string, Agent>,
   toolCalls: Map<string, ToolCallNode>,
+  colors: ColorPalette,
 ) {
   const toolsByAgent = groupToolsByAgent(toolCalls)
 
@@ -56,8 +57,8 @@ export function drawCostLabels(
     ctx.globalAlpha = agent.opacity * 0.9
 
     // Pill background
-    ctx.fillStyle = COLORS.costPillBg
-    ctx.strokeStyle = COLORS.costPillStroke
+    ctx.fillStyle = colors.costPillBg
+    ctx.strokeStyle = colors.costPillStroke
     ctx.lineWidth = 1
     ctx.beginPath()
     ctx.roundRect(pillX, pillY, pillW, pillH, COST_DRAW.pillRadius)
@@ -65,7 +66,7 @@ export function drawCostLabels(
     ctx.stroke()
 
     // Cost text
-    ctx.fillStyle = COLORS.costText
+    ctx.fillStyle = colors.costText
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
     ctx.fillText(label, agent.x, pillY + pillH / 2)
@@ -89,7 +90,7 @@ export function drawCostLabels(
         const barY = pillY + pillH + COST_DRAW.miniBarGap
 
         // Bar background
-        ctx.fillStyle = COLORS.holoBorder06
+        ctx.fillStyle = colors.holoBorder06
         ctx.beginPath()
         ctx.roundRect(barX, barY, barW, barH, COST_DRAW.miniBarRadius)
         ctx.fill()
@@ -99,7 +100,7 @@ export function drawCostLabels(
         for (const [toolName, tokens] of byType) {
           const segW = (tokens / totalToolTokens) * barW
           if (segW < 1) continue
-          ctx.fillStyle = toolTypeColor(toolName)
+          ctx.fillStyle = toolTypeColor(toolName, colors)
           ctx.globalAlpha = agent.opacity * 0.7
           ctx.beginPath()
           ctx.roundRect(segX, barY, segW, barH, COST_DRAW.miniBarRadius)
@@ -117,6 +118,7 @@ export function drawCostSummaryPanel(
   ctx: CanvasRenderingContext2D,
   agents: Map<string, Agent>,
   toolCalls: Map<string, ToolCallNode>,
+  colors: ColorPalette,
 ) {
   const agentList = Array.from(agents.values()).filter(a => a.tokensUsed > 0)
   if (agentList.length === 0) return
@@ -158,8 +160,8 @@ export function drawCostSummaryPanel(
   ctx.save()
 
   // Panel background
-  ctx.fillStyle = COLORS.panelBg
-  ctx.strokeStyle = COLORS.glassBorder
+  ctx.fillStyle = colors.panelBg
+  ctx.strokeStyle = colors.glassBorder
   ctx.lineWidth = 1
   ctx.beginPath()
   ctx.roundRect(panelX, panelY, panelW, panelH, COST_PANEL.borderRadius)
@@ -172,11 +174,11 @@ export function drawCostSummaryPanel(
   ctx.font = 'bold 11px monospace'
   ctx.textAlign = 'left'
   ctx.textBaseline = 'top'
-  ctx.fillStyle = COLORS.costText
+  ctx.fillStyle = colors.costText
   ctx.fillText(`$${totalCost.toFixed(3)}`, panelX + COST_PANEL.contentPadding, y)
 
   ctx.font = '9px monospace'
-  ctx.fillStyle = COLORS.textMuted
+  ctx.fillStyle = colors.textMuted
   ctx.fillText(`${formatTokens(totalTokens)} tokens`, panelX + COST_PANEL.contentPadding + ctx.measureText(`$${totalCost.toFixed(3)}`).width + 14, y + 2)
 
   y += headerH
@@ -188,28 +190,28 @@ export function drawCostSummaryPanel(
 
     // Mini bar background
     const ratio = totalCost > 0 ? a.cost / totalCost : 0
-    ctx.fillStyle = COLORS.holoBorder06
+    ctx.fillStyle = colors.holoBorder06
     ctx.beginPath()
     ctx.roundRect(panelX + COST_PANEL.contentPadding, y + 1, barW, lineH - 3, COST_PANEL.barRadius)
     ctx.fill()
 
     // Bar fill
     ctx.fillStyle = a.name.includes('main') || agentBreakdown.length === 1
-      ? COLORS.barFillMain
-      : COLORS.barFillSub
+      ? colors.barFillMain
+      : colors.barFillSub
     ctx.beginPath()
     ctx.roundRect(panelX + COST_PANEL.contentPadding, y + 1, barW * ratio, lineH - 3, COST_PANEL.barRadius)
     ctx.fill()
 
     // Agent name
     ctx.font = '8px monospace'
-    ctx.fillStyle = COLORS.textPrimary
+    ctx.fillStyle = colors.textPrimary
     ctx.textAlign = 'left'
     ctx.fillText(truncateText(ctx, a.name, barW - 50), panelX + COST_PANEL.contentPadding + COST_PANEL.barInset, y + 3)
 
     // Cost
     ctx.textAlign = 'right'
-    ctx.fillStyle = COLORS.costText
+    ctx.fillStyle = colors.costText
     ctx.fillText(`$${a.cost.toFixed(3)}`, panelX + COST_PANEL.contentPadding + barW - COST_PANEL.barInset, y + 3)
 
     y += lineH
@@ -220,7 +222,7 @@ export function drawCostSummaryPanel(
     y += sectionGap
 
     ctx.font = '8px monospace'
-    ctx.fillStyle = COLORS.textMuted
+    ctx.fillStyle = colors.textMuted
     ctx.textAlign = 'left'
     ctx.fillText('BY TOOL', panelX + COST_PANEL.contentPadding, y)
     y += 14
@@ -230,13 +232,13 @@ export function drawCostSummaryPanel(
       const ratio = totalCost > 0 ? t.cost / totalCost : 0
 
       // Background
-      ctx.fillStyle = COLORS.panelSeparator
+      ctx.fillStyle = colors.panelSeparator
       ctx.beginPath()
       ctx.roundRect(panelX + COST_PANEL.contentPadding, y + 1, barW, lineH - 3, COST_PANEL.barRadius)
       ctx.fill()
 
       // Fill
-      ctx.fillStyle = toolTypeColor(t.name)
+      ctx.fillStyle = toolTypeColor(t.name, colors)
       ctx.globalAlpha = 0.2
       ctx.beginPath()
       ctx.roundRect(panelX + COST_PANEL.contentPadding, y + 1, barW * ratio, lineH - 3, COST_PANEL.barRadius)
@@ -245,13 +247,13 @@ export function drawCostSummaryPanel(
 
       // Tool name
       ctx.font = '8px monospace'
-      ctx.fillStyle = toolTypeColor(t.name)
+      ctx.fillStyle = toolTypeColor(t.name, colors)
       ctx.textAlign = 'left'
       ctx.fillText(truncateText(ctx, t.name, barW - 50), panelX + COST_PANEL.contentPadding + COST_PANEL.barInset, y + 3)
 
       // Cost
       ctx.textAlign = 'right'
-      ctx.fillStyle = COLORS.costTextDim
+      ctx.fillStyle = colors.costTextDim
       ctx.fillText(`$${t.cost.toFixed(3)}`, panelX + COST_PANEL.contentPadding + barW - COST_PANEL.barInset, y + 3)
 
       y += lineH

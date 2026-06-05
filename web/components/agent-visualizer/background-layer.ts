@@ -1,5 +1,5 @@
 import { DepthParticle } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette } from '@/lib/colors'
 import { alphaHex } from '@/lib/utils'
 
 const NUM_PARTICLES = 80
@@ -45,9 +45,10 @@ export function drawBackground(
   showHexGrid: boolean,
   time: number,
   activeAgentPos?: { x: number; y: number; color: string },
+  colors: ColorPalette = DARK_COLORS,
 ): void {
   // Deep void
-  ctx.fillStyle = COLORS.void
+  ctx.fillStyle = colors.void
   ctx.fillRect(0, 0, width, height)
 
   // Ambient spotlight following active agent
@@ -70,14 +71,14 @@ export function drawBackground(
     const alpha = p.brightness * (0.5 + p.depth * 0.5)
 
     ctx.beginPath()
-    ctx.fillStyle = COLORS.holoBase + alphaHex(alpha)
+    ctx.fillStyle = colors.holoBase + alphaHex(alpha)
     ctx.arc(px, py, size, 0, Math.PI * 2)
     ctx.fill()
   }
 
   // Hex grid (optional)
   if (showHexGrid) {
-    drawHexGrid(ctx, width, height, transform, time)
+    drawHexGrid(ctx, width, height, transform, time, colors)
   }
 }
 
@@ -93,6 +94,7 @@ function drawHexGrid(
   height: number,
   transform: { x: number; y: number; scale: number },
   time: number,
+  colors: ColorPalette = DARK_COLORS,
 ): void {
   ctx.save()
   ctx.translate(transform.x, transform.y)
@@ -106,7 +108,7 @@ function drawHexGrid(
   const endY = startY + height / transform.scale + hexHeight * 4
 
   const r = size * 0.4
-  ctx.strokeStyle = COLORS.hexGrid
+  ctx.strokeStyle = colors.hexGrid
   ctx.lineWidth = 0.5
 
   // Quantize alpha into buckets to batch hexagons into fewer draw calls
