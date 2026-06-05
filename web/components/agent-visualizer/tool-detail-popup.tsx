@@ -1,7 +1,8 @@
 'use client'
 
 import { POPUP } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { ToolContentRenderer } from './tool-content-renderer'
 import { PanelHeader, DetailPopup } from './shared-ui'
 
@@ -20,6 +21,8 @@ interface ToolDetailPopupProps {
 }
 
 export function ToolDetailPopup({ tool, position, onClose }: ToolDetailPopupProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const stateColor = tool.state === 'running' ? COLORS.tool_calling : COLORS.complete
 
   return (

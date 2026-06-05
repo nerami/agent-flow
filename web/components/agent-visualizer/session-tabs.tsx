@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useCallback } from 'react'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import type { SessionInfo } from '@/lib/vscode-bridge'
 
 interface SessionTabsProps {
@@ -19,6 +20,8 @@ export function SessionTabs({
   onSelectSession,
   onCloseSession,
 }: SessionTabsProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const buttonRefs = useRef<Map<string, HTMLButtonElement>>(new Map())
 
   const setButtonRef = useCallback((id: string, el: HTMLButtonElement | null) => {

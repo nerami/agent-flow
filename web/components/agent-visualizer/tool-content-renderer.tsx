@@ -1,7 +1,8 @@
 'use client'
 
 import { createContext, useContext } from 'react'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { truncatePath } from '@/lib/utils'
 
 // Context for file-open callback — provided by parent components
@@ -48,6 +49,8 @@ export function ToolContentRenderer({ toolName, inputData, args, compact = false
 }
 
 function FilePath({ path: filePath }: { path: string }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const openFile = useContext(OpenFileContext)
   if (!filePath) return null
   const short = truncatePath(filePath)
@@ -64,6 +67,8 @@ function FilePath({ path: filePath }: { path: string }) {
 }
 
 function EditContent({ data, compact }: { data: Record<string, unknown>; compact: boolean }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const filePath = String(data.file_path || '')
   const oldStr = String(data.old_string || '')
   const newStr = String(data.new_string || '')
@@ -108,6 +113,8 @@ function isTodoArray(v: unknown): v is TodoItem[] {
 }
 
 function TodoContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   if (!isTodoArray(data.todos)) return null
   const todos = data.todos
 
@@ -137,6 +144,8 @@ function TodoContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function BashContent({ data, compact }: { data: Record<string, unknown>; compact: boolean }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const command = String(data.command || '')
   const description = String(data.description || '')
   const maxLen = compact ? 120 : 300
@@ -155,6 +164,8 @@ function BashContent({ data, compact }: { data: Record<string, unknown>; compact
 }
 
 function WriteContent({ data, compact }: { data: Record<string, unknown>; compact: boolean }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const filePath = String(data.file_path || '')
   const content = String(data.content || '')
   const maxLines = compact ? 4 : 8
@@ -176,6 +187,8 @@ function WriteContent({ data, compact }: { data: Record<string, unknown>; compac
 }
 
 function ReadContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const filePath = String(data.file_path || '')
   const offset = typeof data.offset === 'number' ? data.offset : undefined
   const limit = typeof data.limit === 'number' ? data.limit : undefined
@@ -193,6 +206,8 @@ function ReadContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function GrepContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const pattern = String(data.pattern || '')
   const searchPath = String(data.path || '')
   const glob = typeof data.glob === 'string' ? data.glob : undefined
@@ -207,6 +222,8 @@ function GrepContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function GlobContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const pattern = String(data.pattern || '')
   const searchPath = String(data.path || '')
 
@@ -219,6 +236,8 @@ function GlobContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function WebSearchContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const query = String(data.query || '')
 
   return (
@@ -230,6 +249,8 @@ function WebSearchContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function WebFetchContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const url = String(data.url || '')
   const prompt = String(data.prompt || '')
   let displayUrl = url
@@ -250,6 +271,8 @@ function WebFetchContent({ data }: { data: Record<string, unknown> }) {
 }
 
 function AskUserContent({ data }: { data: Record<string, unknown> }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const questions = Array.isArray(data.questions) ? data.questions as Array<{ question?: string; options?: string[] }> : undefined
   if (!questions || questions.length === 0) return null
 

@@ -2,7 +2,8 @@
 
 import { useRef } from 'react'
 import { Z, TIMING } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { GlassCard } from './glass-card'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { stopPropagationHandlers } from './shared-ui'
@@ -19,6 +20,8 @@ interface ContextMenuProps {
 }
 
 export function GlassContextMenu({ position, items, onClose }: ContextMenuProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const ref = useRef<HTMLDivElement>(null)
 
   useClickOutside(ref, onClose, TIMING.contextMenuDelayMs)

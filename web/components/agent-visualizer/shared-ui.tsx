@@ -2,7 +2,8 @@
 
 import { useRef, type ReactNode } from 'react'
 import { Z } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { clampPopupPosition } from '@/lib/clamp-popup-position'
 import { GlassCard } from './glass-card'
@@ -24,6 +25,8 @@ interface CloseButtonProps {
 }
 
 export function CloseButton({ onClick, className = '' }: CloseButtonProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   return (
     <button
       onClick={onClick}
@@ -136,9 +139,12 @@ interface ProgressBarProps {
   trackColor?: string
 }
 
-export function ProgressBar({ percent, color, trackColor = COLORS.holoBg10 }: ProgressBarProps) {
+export function ProgressBar({ percent, color, trackColor }: ProgressBarProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
+  const resolvedTrackColor = trackColor ?? COLORS.holoBg10
   return (
-    <div className="h-1 rounded-full overflow-hidden" style={{ background: trackColor }}>
+    <div className="h-1 rounded-full overflow-hidden" style={{ background: resolvedTrackColor }}>
       <div
         className="h-full rounded-full transition-all duration-500"
         style={{

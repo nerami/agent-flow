@@ -1,7 +1,8 @@
 'use client'
 
 import { CARD, Z, type AgentState } from '@/lib/agent-types'
-import { COLORS, getStateColor } from '@/lib/colors'
+import { getColors, getStateColor } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { TranscriptMessage } from './transcript-message'
 import type { ConversationMessage } from '@/hooks/simulation/types'
 import { PanelHeader, SlidingPanel, stopPropagationHandlers } from './shared-ui'
@@ -22,6 +23,8 @@ export function AgentChatPanel({
   conversation,
   onClose,
 }: ChatPanelProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const { ref: logRef } = useAutoScroll(conversation.length, visible)
 
   const stateColor = getStateColor(agentState)

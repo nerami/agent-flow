@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback, useRef, memo } from 'react'
 import { TimelineEvent, Z, POPUP, TIMING } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors, type ColorPalette } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 
 interface ControlBarProps {
   isPlaying: boolean
@@ -26,7 +27,7 @@ function formatTime(seconds: number) {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-function getEventColor(type: TimelineEvent['type']): string {
+function getEventColor(type: TimelineEvent['type'], COLORS: ColorPalette): string {
   switch (type) {
     case 'thinking': return COLORS.thinking
     case 'tool_call': return COLORS.tool
@@ -49,6 +50,8 @@ const EventMarkers = memo(function EventMarkers({ events, totalDuration, classNa
   /** Pass events.length to bust memo when array is mutated in place */
   eventCount?: number
 }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   // Down-sample to MAX_SCRUBBER_DOTS evenly spaced events when list is large
   const visible = events.length > MAX_SCRUBBER_DOTS
     ? Array.from({ length: MAX_SCRUBBER_DOTS }, (_, i) => events[Math.floor(i * events.length / MAX_SCRUBBER_DOTS)])
@@ -66,7 +69,7 @@ const EventMarkers = memo(function EventMarkers({ events, totalDuration, classNa
           <div
             key={event.id}
             className={`absolute top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full ${className}`}
-            style={{ left: `${pos}%`, background: getEventColor(event.type) }}
+            style={{ left: `${pos}%`, background: getEventColor(event.type, COLORS) }}
           />
         )
       })}
@@ -96,6 +99,8 @@ function LiveControlBar({
   currentTime, totalDuration, timelineEvents,
   eventCount = 0, onEnterReview, isReviewing,
 }: ControlBarProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const [pulseOn, setPulseOn] = useState(true)
   const scrubberEvents = useScrubberEvents(timelineEvents, totalDuration)
 
@@ -172,6 +177,8 @@ function ReviewControlBar({
   onPlayPause, onRestart, onSpeedChange, onSeek,
   timelineEvents, isReviewing, onResumeLive,
 }: ControlBarProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const scrubberRef = useRef<HTMLDivElement>(null)
   const [isScrubbing, setIsScrubbing] = useState(false)
   const scrubberEvents = useScrubberEvents(timelineEvents, totalDuration)

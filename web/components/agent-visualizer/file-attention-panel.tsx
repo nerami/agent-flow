@@ -1,7 +1,8 @@
 'use client'
 
 import { FileAttention, Z } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { formatTokens, truncatePath } from '@/lib/utils'
 import { PanelHeader, ProgressBar, SlidingPanel } from './shared-ui'
 
@@ -13,6 +14,8 @@ interface FileAttentionPanelProps {
 }
 
 export function FileAttentionPanel({ visible, fileAttention, onClose, onOpenFile }: FileAttentionPanelProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   if (!visible) return null
 
   const files = Array.from(fileAttention.values())

@@ -2,7 +2,8 @@
 
 import { useRef, useEffect, useMemo } from 'react'
 import { TimelineEntry, Z } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors, type ColorPalette } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { PanelHeader, SlidingPanel } from './shared-ui'
 
 interface TimelinePanelProps {
@@ -19,16 +20,6 @@ const HEADER_HEIGHT = 20
 const LABEL_WIDTH = 90
 const FONT = '9px monospace'
 
-// ─── Legend (static DOM — no perf cost) ─────────────────────────────────────
-
-const LEGEND_ITEMS = [
-  { color: COLORS.idle, label: 'Idle' },
-  { color: COLORS.thinking, label: 'Thinking' },
-  { color: COLORS.tool, label: 'Tool Call' },
-  { color: COLORS.error, label: 'Error' },
-  { color: COLORS.complete, label: 'Complete' },
-]
-
 // ─── Canvas-based timeline rendering ────────────────────────────────────────
 
 function drawTimeline(
@@ -38,6 +29,7 @@ function drawTimeline(
   width: number,
   height: number,
   dpr: number,
+  COLORS: ColorPalette,
 ) {
   ctx.clearRect(0, 0, width * dpr, height * dpr)
   ctx.save()
@@ -153,6 +145,15 @@ function drawTimeline(
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export function TimelinePanel({ visible, timelineEntries, currentTime, onClose }: TimelinePanelProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
+  const LEGEND_ITEMS = [
+    { color: COLORS.idle, label: 'Idle' },
+    { color: COLORS.thinking, label: 'Thinking' },
+    { color: COLORS.tool, label: 'Tool Call' },
+    { color: COLORS.error, label: 'Error' },
+    { color: COLORS.complete, label: 'Complete' },
+  ]
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   const sortedEntries = useMemo(() => {
@@ -178,9 +179,9 @@ export function TimelinePanel({ visible, timelineEntries, currentTime, onClose }
     canvas.style.width = `${width}px`
     canvas.style.height = `${canvasHeight}px`
 
-    drawTimeline(ctx, sortedEntries, currentTime, width, canvasHeight, dpr)
+    drawTimeline(ctx, sortedEntries, currentTime, width, canvasHeight, dpr, COLORS)
   // eslint-disable-next-line react-hooks/exhaustive-deps -- redraw on every prop change (component only re-renders on data/time updates)
-  }, [visible, sortedEntries, currentTime, canvasHeight])
+  }, [visible, sortedEntries, currentTime, canvasHeight, isDark])
 
   if (!visible) return null
 

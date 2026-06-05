@@ -18,7 +18,8 @@ import { SessionTranscriptPanel } from "./session-transcript-panel"
 import { OpenFileProvider } from "./tool-content-renderer"
 import { stopPropagationHandlers } from "./shared-ui"
 import { TimelineEvent, TIMING } from "@/lib/agent-types"
-import { COLORS } from "@/lib/colors"
+import { getColors } from "@/lib/colors"
+import { useTheme } from "@/hooks/use-theme"
 
 import { MOCK_DURATION } from "@/lib/mock-scenario"
 import { MessageFeedPanel } from "./message-feed-panel"
@@ -26,6 +27,8 @@ import { TopBar } from "./top-bar"
 import { useAudioEffects } from "@/hooks/use-audio-effects"
 
 export function AgentVisualizer() {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const bridge = useVSCodeBridge()
 
   const {

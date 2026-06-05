@@ -1,13 +1,16 @@
 'use client'
 
 import { useState } from 'react'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { ToolContentRenderer } from './tool-content-renderer'
 import type { ConversationMessage } from '@/hooks/simulation/types'
 
 // ─── Shared message rendering utilities ──────────────────────────────────────
 
 export function HighlightText({ text, query }: { text: string; query?: string }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   if (!query || !query.trim()) return <>{text}</>
   const parts = text.split(new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi'))
   return (
@@ -22,6 +25,8 @@ export function HighlightText({ text, query }: { text: string; query?: string })
 }
 
 export function TranscriptMessage({ message, compact = false, searchQuery }: { message: ConversationMessage; compact?: boolean; searchQuery?: string }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const [expanded, setExpanded] = useState(false)
 
   switch (message.type) {

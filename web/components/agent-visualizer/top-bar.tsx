@@ -2,7 +2,8 @@
 
 import { memo } from "react"
 import { Z } from "@/lib/agent-types"
-import { COLORS } from "@/lib/colors"
+import { getColors } from "@/lib/colors"
+import { useTheme } from "@/hooks/use-theme"
 import { formatTokens } from "@/lib/utils"
 import { agentCost } from "./canvas/draw-cost"
 import { SessionTabs } from "./session-tabs"
@@ -39,6 +40,8 @@ function ToggleButton({ active, onClick, children, style, activeColor }: {
   style?: React.CSSProperties
   activeColor?: { bg: string; text: string }
 }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   return (
     <button
       onClick={onClick}
@@ -58,6 +61,8 @@ function ToggleButton({ active, onClick, children, style, activeColor }: {
 // ─── Connection Status Indicator ────────────────────────────────────────────
 
 function ConnectionIndicator({ status }: { status: ConnectionStatus }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const color = status === 'watching' ? COLORS.complete
     : status === 'connected' ? COLORS.idle : COLORS.error
   const label = status === 'watching' ? 'LIVE'
@@ -108,6 +113,8 @@ export const TopBar = memo(function TopBar({
   showFileAttention, showTranscript, showCostOverlay, showTimeline, isMuted,
   onTogglePanel, onToggleTimeline, onToggleMute,
 }: TopBarProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   return (
     <div className="absolute top-3 left-3 right-3 flex items-center gap-4 font-mono text-[10px]" style={{ zIndex: Z.info }}>
       {/* Session tabs — scrollable, takes available space */}

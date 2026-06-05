@@ -1,7 +1,8 @@
 'use client'
 
 import { CARD, Z, type AgentState } from '@/lib/agent-types'
-import { COLORS, getStateColor } from '@/lib/colors'
+import { getColors, getStateColor } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { formatTokens } from '@/lib/utils'
 import { GlassCard } from './glass-card'
 import { PanelHeader, ProgressBar } from './shared-ui'
@@ -24,6 +25,8 @@ export function AgentDetailCard({
   agent,
   onClose,
 }: AgentDetailCardProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const contextPercent = Math.round((agent.tokensUsed / agent.tokensMax) * 100)
   const stateColor = getStateColor(agent.state)
 

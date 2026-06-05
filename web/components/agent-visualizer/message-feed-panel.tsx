@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Agent, Z, type AgentState } from '@/lib/agent-types'
-import { COLORS, ROLE_COLORS, getStateColor } from '@/lib/colors'
+import { getColors, ROLE_COLORS, getStateColor } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import type { ConversationMessage } from '@/hooks/simulation/types'
 import { useClickOutside } from '@/hooks/use-click-outside'
 import { useVirtualList } from '@/hooks/use-virtual-list'
@@ -33,6 +34,8 @@ export function MessageFeedPanel({
   onAgentClick,
   selectedAgentId,
 }: MessageFeedPanelProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const [expanded, setExpanded] = useState(false)
   const [activeTab, setActiveTab] = useState<string>('all')
   const [unread, setUnread] = useState<Set<string>>(new Set())
@@ -309,6 +312,8 @@ function TabButton({ label, active, onClick, color, hasUnread }: {
   color: string
   hasUnread?: boolean
 }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   return (
     <button
       onClick={onClick}
@@ -340,6 +345,8 @@ function MessageRow({ message, agentId, agentName, showAgent, isSelected, onClic
   isSelected: boolean
   onClick: () => void
 }) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const [expanded, setExpanded] = useState(false)
   const role = ROLE_COLORS[message.type] ?? ROLE_COLORS.assistant
   const isLong = message.content.length > MESSAGE_TRUNCATE_MAX

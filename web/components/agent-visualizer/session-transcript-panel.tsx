@@ -2,7 +2,8 @@
 
 import { useRef, useEffect, useState } from 'react'
 import { Z, CARD } from '@/lib/agent-types'
-import { COLORS } from '@/lib/colors'
+import { getColors } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { TranscriptMessage } from './transcript-message'
 import type { ConversationMessage } from '@/hooks/simulation/types'
 import { CloseButton, SlidingPanel, stopPropagationHandlers } from './shared-ui'
@@ -26,6 +27,8 @@ export function SessionTranscriptPanel({
   conversation,
   onClose,
 }: TranscriptPanelProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const [searchQuery, setSearchQuery] = useState('')
   const [showSearch, setShowSearch] = useState(false)
   const searchRef = useRef<HTMLInputElement>(null)

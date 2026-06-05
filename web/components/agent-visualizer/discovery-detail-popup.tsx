@@ -1,7 +1,8 @@
 'use client'
 
 import { POPUP } from '@/lib/agent-types'
-import { COLORS, getDiscoveryTypeColor } from '@/lib/colors'
+import { getColors, getDiscoveryTypeColor } from '@/lib/colors'
+import { useTheme } from '@/hooks/use-theme'
 import { PanelHeader, DetailPopup } from './shared-ui'
 
 interface DiscoveryDetailPopupProps {
@@ -17,6 +18,8 @@ interface DiscoveryDetailPopupProps {
 }
 
 export function DiscoveryDetailPopup({ discovery, position, onClose }: DiscoveryDetailPopupProps) {
+  const { isDark } = useTheme()
+  const COLORS = getColors(isDark)
   const typeColor = getDiscoveryTypeColor(discovery.type)
 
   const typeLabel =
