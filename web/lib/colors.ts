@@ -2,7 +2,7 @@
  * Holographic color palette and role color definitions.
  *
  * Extracted from agent-types.ts to keep that file focused on type definitions.
- * All colors are re-exported from agent-types.ts for backward compatibility.
+ * All colors re-exported from here for backward compatibility.
  */
 
 import type { AgentState, ContextBreakdown } from './agent-types'
@@ -447,24 +447,24 @@ export const ROLE_COLORS: Record<string, { bg: string; bgSelected: string; text:
 
 // ─── Color Helper Functions ──────────────────────────────────────────────────
 
-export function getStateColor(state: AgentState): string {
+export function getStateColor(state: AgentState, colors: typeof DARK_COLORS = DARK_COLORS): string {
   switch (state) {
-    case 'idle': return COLORS.idle
-    case 'thinking': return COLORS.thinking
-    case 'tool_calling': return COLORS.tool_calling
-    case 'complete': return COLORS.complete
-    case 'error': return COLORS.error
-    case 'paused': return COLORS.paused
-    case 'waiting_permission': return COLORS.waiting_permission
+    case 'idle': return colors.idle
+    case 'thinking': return colors.thinking
+    case 'tool_calling': return colors.tool_calling
+    case 'complete': return colors.complete
+    case 'error': return colors.error
+    case 'paused': return colors.paused
+    case 'waiting_permission': return colors.waiting_permission
   }
 }
 
-export function getDiscoveryTypeColor(type: string): string {
+export function getDiscoveryTypeColor(type: string, colors: typeof DARK_COLORS = DARK_COLORS): string {
   switch (type) {
-    case 'file': return COLORS.discoveryFile
-    case 'pattern': return COLORS.discoveryPattern
-    case 'finding': return COLORS.discoveryFinding
-    default: return COLORS.discoveryCode
+    case 'file': return colors.discoveryFile
+    case 'pattern': return colors.discoveryPattern
+    case 'finding': return colors.discoveryFinding
+    default: return colors.discoveryCode
   }
 }
 
@@ -474,12 +474,12 @@ export function withAlpha(rgbaBase: string, alpha: number): string {
 }
 
 /** Build the context-breakdown color segments for a given breakdown. */
-export function contextSegments(bd: ContextBreakdown) {
+export function contextSegments(bd: ContextBreakdown, colors: typeof DARK_COLORS = DARK_COLORS) {
   return [
-    { value: bd.systemPrompt, color: COLORS.contextSystem },
-    { value: bd.userMessages, color: COLORS.contextUser },
-    { value: bd.toolResults, color: COLORS.contextToolResults },
-    { value: bd.reasoning, color: COLORS.contextReasoning },
-    { value: bd.subagentResults, color: COLORS.contextSubagent },
+    { value: bd.systemPrompt, color: colors.contextSystem },
+    { value: bd.userMessages, color: colors.contextUser },
+    { value: bd.toolResults, color: colors.contextToolResults },
+    { value: bd.reasoning, color: colors.contextReasoning },
+    { value: bd.subagentResults, color: colors.contextSubagent },
   ]
 }
