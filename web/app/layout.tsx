@@ -30,8 +30,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
-      <body className="font-sans antialiased bg-[#0a0a1a]">
+    <html lang="en">
+      {/* Apply .dark before first paint to prevent flash of wrong theme */}
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}`,
+        }}
+      />
+      <body className="font-sans antialiased bg-background">
         {children}
       </body>
     </html>
