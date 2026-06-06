@@ -447,6 +447,20 @@ export const LIGHT_COLORS = {
   panelLabelDim: transformColor('#66ccff', { opacity: 0.4 }),
   scrollBtnText: transformColor('#66ccff'),
   scrollbarThumb: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
+} as const
+
+// Dev override: read from localStorage and merge into LIGHT_COLORS at module init.
+// Page reload is required for overrides to take effect.
+if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+  try {
+    const raw = localStorage.getItem('lightColorOverrides')
+    if (raw) {
+      const overrides = JSON.parse(raw) as Partial<Record<keyof typeof LIGHT_COLORS, string>>
+      Object.assign(LIGHT_COLORS as Record<string, string>, overrides)
+    }
+  } catch {
+    // Ignore malformed JSON or unavailable localStorage
+  }
 }
 
 /** Backward-compat alias — existing code importing COLORS gets dark palette. */
