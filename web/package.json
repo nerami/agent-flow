@@ -9,6 +9,7 @@
     "build:webview": "vite build --config vite.config.webview.ts"
   },
   "dependencies": {
+    "@uiw/react-color-wheel": "^2.10.3",
     "colord": "^2.9.3",
     "d3-force": "^3.0.0",
     "next": "16.1.6",
