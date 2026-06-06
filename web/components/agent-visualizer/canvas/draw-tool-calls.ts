@@ -43,8 +43,8 @@ export function drawToolCalls(
       : isSelected ? withAlpha(colors.toolCardSelected, 0.15 * pulse) : withAlpha(colors.toolCard, 0.7 * pulse)
     ctx.fill()
     ctx.strokeStyle = isError
-      ? colors.error + '90'
-      : isSelected ? colors.holoBase + 'aa' : isRunning ? colors.tool + '60' : colors.return + '40'
+      ? withAlpha(colors.error, 0.56)
+      : isSelected ? withAlpha(colors.holoBase, 0.67) : isRunning ? withAlpha(colors.tool, 0.38) : withAlpha(colors.return, 0.25)
     ctx.lineWidth = isError ? 2 : isSelected ? 1.5 : 1
     ctx.stroke()
 
@@ -54,7 +54,7 @@ export function drawToolCalls(
     if (isRunning) {
       ctx.beginPath()
       ctx.arc(tool.x, tool.y, Math.max(cardW, cardH) / 2 + TOOL_DRAW.spinRingPadding, time * TOOL_DRAW.spinSpeed, time * TOOL_DRAW.spinSpeed + TOOL_DRAW.spinArc)
-      ctx.strokeStyle = colors.tool + '50'
+      ctx.strokeStyle = withAlpha(colors.tool, 0.31)
       ctx.lineWidth = 1.5
       ctx.stroke()
     }
@@ -62,7 +62,7 @@ export function drawToolCalls(
     // Crack lines for errors
     if (isError) {
       ctx.save()
-      ctx.strokeStyle = colors.error + '40'
+      ctx.strokeStyle = withAlpha(colors.error, 0.25)
       ctx.lineWidth = 0.8
       for (let i = 0; i < 3; i++) {
         const a = (i / 3) * Math.PI * 2 + 0.5
@@ -87,7 +87,7 @@ export function drawToolCalls(
       ctx.fillStyle = colors.error
       ctx.fillText(truncateText(ctx, `${tool.toolName}: FAILED`, cardW - 8), tool.x, tool.y - TOOL_DRAW.twoLineOffset)
       ctx.font = `${TOOL_DRAW.errorFontSize}px monospace`
-      ctx.fillStyle = colors.error + 'aa'
+      ctx.fillStyle = withAlpha(colors.error, 0.67)
       ctx.fillText(truncateText(ctx, tool.errorMessage || tool.result || '', cardW - 8), tool.x, tool.y + TOOL_DRAW.twoLineOffset + 2)
     } else {
       // Completed card: show action + file path (most useful info at a glance)
@@ -95,7 +95,7 @@ export function drawToolCalls(
       ctx.fillText(truncatedLabel, tool.x, tool.y - TOOL_DRAW.twoLineOffset)
       if (tool.tokenCost) {
         // Token cost as dim text below
-        ctx.fillStyle = colors.tool + '90'
+        ctx.fillStyle = withAlpha(colors.tool, 0.56)
         ctx.font = `${TOOL_DRAW.tokenFontSize}px monospace`
         ctx.fillText(`${tool.tokenCost} tok`, tool.x, tool.y + TOOL_DRAW.twoLineOffset + 2)
       }

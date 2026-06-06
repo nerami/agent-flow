@@ -1,7 +1,6 @@
 import { Agent, ToolCallNode, Particle, Edge, BEAM, FX } from '@/lib/agent-types'
-import { DARK_COLORS, ColorPalette } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette, withAlpha } from '@/lib/colors'
 import { PARTICLE_DRAW } from '@/lib/canvas-constants'
-import { alphaHex } from '@/lib/utils'
 import { bezierPoint, resolveEdgeTarget, computeControlPoints } from './draw-edges'
 import { getGlowSprite } from './render-cache'
 
@@ -67,14 +66,14 @@ export function drawParticles(
       const ty = bezierPoint(tt, fromY, cp1y, cp2y, toY) + normalY * wob
       const alpha = ((FX.trailSegments - i) / FX.trailSegments) * 0.6
       ctx.beginPath()
-      ctx.fillStyle = particle.color + alphaHex(alpha)
+      ctx.fillStyle = withAlpha(particle.color, alpha)
       ctx.arc(tx, ty, particle.size * ((FX.trailSegments - i) / FX.trailSegments), 0, Math.PI * 2)
       ctx.fill()
     }
 
     // Glow (pre-rendered sprite instead of per-frame gradient)
     const glowR = PARTICLE_DRAW.glowRadius
-    const glowSprite = getGlowSprite(particle.color, glowR, '60', '00')
+    const glowSprite = getGlowSprite(particle.color, glowR, 0.38, 0)
     ctx.drawImage(glowSprite, px - glowR, py - glowR)
 
     // Particle core
@@ -83,13 +82,13 @@ export function drawParticles(
     ctx.arc(px, py, particle.size, 0, Math.PI * 2)
     ctx.fill()
     ctx.beginPath()
-    ctx.fillStyle = colors.holoHot + '80'
+    ctx.fillStyle = withAlpha(colors.holoHot, 0.5)
     ctx.arc(px, py, particle.size * PARTICLE_DRAW.coreHighlightScale, 0, Math.PI * 2)
     ctx.fill()
 
     // Label near particle
     if (particle.label && t > PARTICLE_DRAW.labelMinT && t < PARTICLE_DRAW.labelMaxT) {
-      ctx.fillStyle = particle.color + 'aa'
+      ctx.fillStyle = withAlpha(particle.color, 0.67)
       ctx.font = `${PARTICLE_DRAW.labelFontSize}px monospace`
       ctx.textAlign = 'center'
       ctx.fillText(particle.label, px, py + PARTICLE_DRAW.labelYOffset)

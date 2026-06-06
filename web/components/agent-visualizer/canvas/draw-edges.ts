@@ -1,6 +1,5 @@
 import { Agent, ToolCallNode, Particle, Edge, BEAM, ANIM } from '@/lib/agent-types'
-import { DARK_COLORS, ColorPalette } from '@/lib/colors'
-import { alphaHex } from '@/lib/utils'
+import { DARK_COLORS, ColorPalette, withAlpha } from '@/lib/colors'
 import { MIN_VISIBLE_OPACITY } from '@/lib/canvas-constants'
 
 export function bezierPoint(t: number, p0: number, p1: number, p2: number, p3: number) {
@@ -87,7 +86,7 @@ export function drawTaperedBezier(
   }
 
   ctx.closePath()
-  ctx.fillStyle = color + alphaHex(alpha)
+  ctx.fillStyle = withAlpha(color, alpha)
   ctx.fill()
 }
 

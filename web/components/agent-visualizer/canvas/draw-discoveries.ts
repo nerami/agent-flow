@@ -1,5 +1,5 @@
 import { Agent, Discovery } from '@/lib/agent-types'
-import { DARK_COLORS, type ColorPalette, getDiscoveryTypeColor } from '@/lib/colors'
+import { DARK_COLORS, type ColorPalette, getDiscoveryTypeColor, withAlpha } from '@/lib/colors'
 import { getDiscoveryCardDimensions } from '@/lib/canvas-constants'
 import { truncateText } from './draw-misc'
 
@@ -10,7 +10,7 @@ export function drawDiscoveryConnections(ctx: CanvasRenderingContext2D, discover
 
     ctx.save()
     ctx.globalAlpha = disc.opacity * 0.3
-    ctx.strokeStyle = colors.holoBase + '30'
+    ctx.strokeStyle = withAlpha(colors.holoBase, 0.19)
     ctx.lineWidth = 0.5
     ctx.setLineDash([3, 5])
     ctx.beginPath()

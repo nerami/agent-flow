@@ -1,9 +1,9 @@
 import { Agent, NODE, ANIM } from '@/lib/agent-types'
-import { DARK_COLORS, type ColorPalette, getStateColor, contextSegments } from '@/lib/colors'
+import { DARK_COLORS, type ColorPalette, getStateColor, contextSegments, withAlpha } from '@/lib/colors'
 import {
   AGENT_DRAW, CONTEXT_BAR, CONTEXT_RING, STATS_OVERLAY,
 } from '@/lib/canvas-constants'
-import { alphaHex, formatTokens } from '@/lib/utils'
+import { formatTokens } from '@/lib/utils'
 import { truncateText, drawHexagon, CLAUDE_SPARK_D, OPENAI_LOGO_D, OPENAI_LOGO_VIEWBOX } from './draw-misc'
 import { getAgentGlowSprite } from './render-cache'
 
@@ -191,12 +191,12 @@ function drawAgentGlow(ctx: CanvasRenderingContext2D, agent: Agent, r: number, c
   const glowR = r + AGENT_DRAW.glowPadding
   const glowAlpha = isHovered || isSelected ? 0.35 : isWaiting ? 0.3 : agent.state === 'thinking' ? 0.2 : 0.1
   // Pre-rendered glow sprite instead of per-frame gradient creation
-  const sprite = getAgentGlowSprite(color, Math.round(r * 0.5), Math.ceil(glowR), alphaHex(glowAlpha))
+  const sprite = getAgentGlowSprite(color, Math.round(r * 0.5), Math.ceil(glowR), glowAlpha)
   ctx.drawImage(sprite, agent.x - Math.ceil(glowR), agent.y - Math.ceil(glowR))
 
   // Ambient outer hex ring
   drawHexagon(ctx, agent.x, agent.y, r + AGENT_DRAW.outerRingOffset)
-  ctx.strokeStyle = color + '25'
+  ctx.strokeStyle = withAlpha(color, 0.15)
   ctx.lineWidth = 1
   ctx.stroke()
 
@@ -213,10 +213,10 @@ function drawScanline(ctx: CanvasRenderingContext2D, agent: Agent, r: number, co
   drawHexagon(ctx, agent.x, agent.y, r)
   ctx.clip()
   const scanGrad = ctx.createLinearGradient(agent.x, scanY - AGENT_DRAW.scanlineHalfH, agent.x, scanY + AGENT_DRAW.scanlineHalfH)
-  const scanAlpha = isHovered ? '35' : '20'
-  scanGrad.addColorStop(0, color + '00')
-  scanGrad.addColorStop(0.5, color + scanAlpha)
-  scanGrad.addColorStop(1, color + '00')
+  const scanAlpha = isHovered ? 0.21 : 0.13
+  scanGrad.addColorStop(0, withAlpha(color, 0))
+  scanGrad.addColorStop(0.5, withAlpha(color, scanAlpha))
+  scanGrad.addColorStop(1, withAlpha(color, 0))
   ctx.fillStyle = scanGrad
   ctx.fillRect(agent.x - r, scanY - AGENT_DRAW.scanlineHalfH, r * 2, AGENT_DRAW.scanlineWidth)
   ctx.restore()
@@ -228,7 +228,7 @@ function drawStateRing(ctx: CanvasRenderingContext2D, agent: Agent, r: number, c
   ctx.lineWidth = (isSelected || isHovered) ? 2.5 : 2
   if (agent.state === 'complete') {
     ctx.setLineDash([4, 4])
-    ctx.strokeStyle = color + '60'
+    ctx.strokeStyle = withAlpha(color, 0.38)
   } else if (isWaiting) {
     ctx.setLineDash([6, 4])
     ctx.lineDashOffset = -time * AGENT_DRAW.waitingDashSpeed
@@ -244,8 +244,8 @@ function drawCenterIcon(ctx: CanvasRenderingContext2D, agent: Agent, r: number, 
     // Geometric lock icon — fits the holographic style
     const s = r * 0.3
     ctx.save()
-    ctx.strokeStyle = color + '90'
-    ctx.fillStyle = color + '90'
+    ctx.strokeStyle = withAlpha(color, 0.56)
+    ctx.fillStyle = withAlpha(color, 0.56)
     ctx.lineWidth = 1.5
     // Lock body (rounded rect)
     ctx.beginPath()
@@ -257,9 +257,9 @@ function drawCenterIcon(ctx: CanvasRenderingContext2D, agent: Agent, r: number, 
     ctx.stroke()
     ctx.restore()
   } else if (agent.isMain) {
-    drawAgentBrand(ctx, agent.x, agent.y, r, color + '90', agent.runtime)
+    drawAgentBrand(ctx, agent.x, agent.y, r, withAlpha(color, 0.56), agent.runtime)
   } else {
-    ctx.fillStyle = color + '90'
+    ctx.fillStyle = withAlpha(color, 0.56)
     ctx.font = `${r * AGENT_DRAW.subIconScale}px monospace`
     ctx.textAlign = 'center'
     ctx.textBaseline = 'middle'
@@ -271,7 +271,7 @@ function drawOrbitingParticles(ctx: CanvasRenderingContext2D, agent: Agent, r: n
   for (let i = 0; i < 4; i++) {
     const angle = time * ANIM.orbitSpeed + (i / 4) * Math.PI * 2
     ctx.beginPath()
-    ctx.fillStyle = color + '80'
+    ctx.fillStyle = withAlpha(color, 0.5)
     ctx.arc(
       agent.x + Math.cos(angle) * (r + AGENT_DRAW.orbitParticleOffset),
       agent.y + Math.sin(angle) * (r + AGENT_DRAW.orbitParticleOffset),
@@ -289,7 +289,7 @@ function drawWaitingRipples(ctx: CanvasRenderingContext2D, agent: Agent, r: numb
     const rippleAlpha = (1 - ripplePhase) * AGENT_DRAW.rippleMaxAlpha
     ctx.beginPath()
     drawHexagon(ctx, agent.x, agent.y, rippleR)
-    ctx.strokeStyle = color + alphaHex(rippleAlpha)
+    ctx.strokeStyle = withAlpha(color, rippleAlpha)
     ctx.lineWidth = 1.5 * (1 - ripplePhase)
     ctx.stroke()
   }
@@ -298,7 +298,7 @@ function drawWaitingRipples(ctx: CanvasRenderingContext2D, agent: Agent, r: numb
   for (let i = 0; i < 3; i++) {
     const angle = time * AGENT_DRAW.waitingOrbitSpeed + (i / 3) * Math.PI * 2
     ctx.beginPath()
-    ctx.fillStyle = color + '70'
+    ctx.fillStyle = withAlpha(color, 0.44)
     ctx.arc(
       agent.x + Math.cos(angle) * (r + AGENT_DRAW.waitingOrbitOffset),
       agent.y + Math.sin(angle) * (r + AGENT_DRAW.waitingOrbitOffset),

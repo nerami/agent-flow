@@ -1,7 +1,6 @@
-import { DARK_COLORS, ColorPalette } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette, withAlpha } from '@/lib/colors'
 import { SPAWN_FX, COMPLETE_FX } from '@/lib/canvas-constants'
 import { drawHexagon } from './draw-misc'
-import { alphaHex } from '@/lib/utils'
 
 export interface VisualEffect {
   type: 'spawn' | 'complete' | 'shatter'
@@ -29,7 +28,7 @@ export function drawEffects(ctx: CanvasRenderingContext2D, effects: VisualEffect
           const flashAlpha = (1 - progress / SPAWN_FX.flashThreshold) * SPAWN_FX.flashAlpha
           ctx.beginPath()
           ctx.arc(fx.x, fx.y, SPAWN_FX.flashBaseRadius * (1 - progress / SPAWN_FX.flashThreshold) + SPAWN_FX.flashMinRadius, 0, Math.PI * 2)
-          ctx.fillStyle = colors.holoHot + alphaHex(flashAlpha)
+          ctx.fillStyle = withAlpha(colors.holoHot, flashAlpha)
           ctx.fill()
         }
 
@@ -47,7 +46,7 @@ export function drawEffects(ctx: CanvasRenderingContext2D, effects: VisualEffect
           const px = fx.x + Math.cos(a) * d
           const py = fx.y + Math.sin(a) * d
           ctx.beginPath()
-          ctx.fillStyle = fx.color + alphaHex(alpha * (200 / 255))
+          ctx.fillStyle = withAlpha(fx.color, alpha * (200 / 255))
           ctx.arc(px, py, SPAWN_FX.particleSize * (1 - progress), 0, Math.PI * 2)
           ctx.fill()
         }
@@ -63,8 +62,8 @@ export function drawEffects(ctx: CanvasRenderingContext2D, effects: VisualEffect
         if (progress < COMPLETE_FX.flashThreshold) {
           const flashAlpha = (1 - progress / COMPLETE_FX.flashThreshold) * COMPLETE_FX.flashAlpha
           const grad = ctx.createRadialGradient(fx.x, fx.y, 0, fx.x, fx.y, COMPLETE_FX.flashRadius)
-          grad.addColorStop(0, colors.holoHot + alphaHex(flashAlpha))
-          grad.addColorStop(1, colors.holoHot + '00')
+          grad.addColorStop(0, withAlpha(colors.holoHot, flashAlpha))
+          grad.addColorStop(1, withAlpha(colors.holoHot, 0))
           ctx.fillStyle = grad
           ctx.fillRect(fx.x - COMPLETE_FX.flashRadius, fx.y - COMPLETE_FX.flashRadius, COMPLETE_FX.flashRadius * 2, COMPLETE_FX.flashRadius * 2)
         }
@@ -79,9 +78,9 @@ export function drawEffects(ctx: CanvasRenderingContext2D, effects: VisualEffect
 
         // Glow behind ring
         const grad = ctx.createRadialGradient(fx.x, fx.y, ringRadius - COMPLETE_FX.glowInner, fx.x, fx.y, ringRadius + COMPLETE_FX.glowOuter)
-        grad.addColorStop(0, fx.color + '00')
-        grad.addColorStop(0.5, fx.color + alphaHex(alpha * (100 / 255)))
-        grad.addColorStop(1, fx.color + '00')
+        grad.addColorStop(0, withAlpha(fx.color, 0))
+        grad.addColorStop(0.5, withAlpha(fx.color, alpha * (100 / 255)))
+        grad.addColorStop(1, withAlpha(fx.color, 0))
         ctx.fillStyle = grad
         ctx.beginPath()
         ctx.arc(fx.x, fx.y, ringRadius + COMPLETE_FX.glowOuter, 0, Math.PI * 2)
@@ -109,8 +108,8 @@ export function drawEffects(ctx: CanvasRenderingContext2D, effects: VisualEffect
           // Tiny glow on each particle
           ctx.beginPath()
           const glow = ctx.createRadialGradient(px, py, 0, px, py, size * 3)
-          glow.addColorStop(0, fx.color + '40')
-          glow.addColorStop(1, fx.color + '00')
+          glow.addColorStop(0, withAlpha(fx.color, 0.25))
+          glow.addColorStop(1, withAlpha(fx.color, 0))
           ctx.fillStyle = glow
           ctx.arc(px, py, size * 3, 0, Math.PI * 2)
           ctx.fill()

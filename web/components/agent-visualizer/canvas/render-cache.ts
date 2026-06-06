@@ -1,3 +1,5 @@
+import { withAlpha } from '@/lib/colors'
+
 // ─── Glow sprite cache ─────────────────────────────────────────────────────
 // Pre-renders radial gradient glows to off-screen canvases.
 // Avoids creating CanvasGradient objects every frame.
@@ -6,7 +8,7 @@ const glowSpriteCache = new Map<string, HTMLCanvasElement>()
 
 /** Simple radial glow: gradient from center (innerAlpha) to edge (outerAlpha) */
 export function getGlowSprite(
-  color: string, radius: number, innerAlpha: string, outerAlpha: string,
+  color: string, radius: number, innerAlpha: number, outerAlpha: number,
 ): HTMLCanvasElement {
   const rQ = Math.ceil(radius)
   const key = `${color}|${rQ}|${innerAlpha}|${outerAlpha}`
@@ -19,8 +21,8 @@ export function getGlowSprite(
   sprite.height = size
   const ctx = sprite.getContext('2d')!
   const glow = ctx.createRadialGradient(rQ, rQ, 0, rQ, rQ, rQ)
-  glow.addColorStop(0, color + innerAlpha)
-  glow.addColorStop(1, color + outerAlpha)
+  glow.addColorStop(0, withAlpha(color, innerAlpha))
+  glow.addColorStop(1, withAlpha(color, outerAlpha))
   ctx.fillStyle = glow
   ctx.fillRect(0, 0, size, size)
 
@@ -30,11 +32,11 @@ export function getGlowSprite(
 
 /** Agent glow: gradient from innerRadius to outerRadius */
 export function getAgentGlowSprite(
-  color: string, innerRadius: number, outerRadius: number, glowAlphaHex: string,
+  color: string, innerRadius: number, outerRadius: number, glowAlpha: number,
 ): HTMLCanvasElement {
   const iR = Math.round(innerRadius)
   const oR = Math.ceil(outerRadius)
-  const key = `ag|${color}|${iR}|${oR}|${glowAlphaHex}`
+  const key = `ag|${color}|${iR}|${oR}|${glowAlpha}`
   let sprite = glowSpriteCache.get(key)
   if (sprite) return sprite
 
@@ -44,8 +46,8 @@ export function getAgentGlowSprite(
   sprite.height = size
   const ctx = sprite.getContext('2d')!
   const glow = ctx.createRadialGradient(oR, oR, iR, oR, oR, oR)
-  glow.addColorStop(0, color + glowAlphaHex)
-  glow.addColorStop(1, color + '00')
+  glow.addColorStop(0, withAlpha(color, glowAlpha))
+  glow.addColorStop(1, withAlpha(color, 0))
   ctx.fillStyle = glow
   ctx.fillRect(0, 0, size, size)
 

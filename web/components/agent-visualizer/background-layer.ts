@@ -1,6 +1,5 @@
 import { DepthParticle } from '@/lib/agent-types'
-import { DARK_COLORS, ColorPalette } from '@/lib/colors'
-import { alphaHex } from '@/lib/utils'
+import { DARK_COLORS, ColorPalette, withAlpha } from '@/lib/colors'
 
 const NUM_PARTICLES = 80
 const HEX_GRID_SIZE = 60
@@ -56,7 +55,7 @@ export function drawBackground(
     const screenX = activeAgentPos.x * transform.scale + transform.x
     const screenY = activeAgentPos.y * transform.scale + transform.y
     const gradient = ctx.createRadialGradient(screenX, screenY, 0, screenX, screenY, 300)
-    gradient.addColorStop(0, activeAgentPos.color + '08')
+    gradient.addColorStop(0, withAlpha(activeAgentPos.color, 0.03))
     gradient.addColorStop(1, 'transparent')
     ctx.fillStyle = gradient
     ctx.fillRect(0, 0, width, height)
@@ -71,7 +70,7 @@ export function drawBackground(
     const alpha = p.brightness * (0.5 + p.depth * 0.5)
 
     ctx.beginPath()
-    ctx.fillStyle = colors.holoBase + alphaHex(alpha)
+    ctx.fillStyle = withAlpha(colors.holoBase, alpha)
     ctx.arc(px, py, size, 0, Math.PI * 2)
     ctx.fill()
   }

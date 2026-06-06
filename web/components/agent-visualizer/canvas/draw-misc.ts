@@ -1,5 +1,5 @@
 import { Agent, NODE, CARD, TETHER } from '@/lib/agent-types'
-import { DARK_COLORS, ColorPalette } from '@/lib/colors'
+import { DARK_COLORS, ColorPalette, withAlpha } from '@/lib/colors'
 import { measureTextCached } from './render-cache'
 
 /** Truncate text with ellipsis to fit within maxWidth pixels */
@@ -45,7 +45,7 @@ export function drawTetherLine(ctx: CanvasRenderingContext2D, agent: Agent, tran
 
   // Dot at the end
   ctx.beginPath()
-  ctx.fillStyle = colors.holoBase + '90'
+  ctx.fillStyle = withAlpha(colors.holoBase, 0.56)
   ctx.arc(endX, endY, TETHER.dotRadius, 0, Math.PI * 2)
   ctx.fill()
   ctx.restore()
