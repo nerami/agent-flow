@@ -102,17 +102,22 @@ function toHex(value: string): string {
 
 export function ThemeColorEditor() {
   const [minimized, setMinimized] = useState(false)
-  const [position, setPosition] = useState({ x: window.innerWidth - 290, y: 20 })
+  const [position, setPosition] = useState(() => ({
+    x: typeof window !== 'undefined' ? window.innerWidth - 290 : 0,
+    y: 20,
+  }))
   const [selectedKey, setSelectedKey] = useState<keyof typeof LIGHT_COLORS | null>(null)
   const [pendingOverrides, setPendingOverrides] = useState<Record<string, string>>(loadOverrides)
   const [pickerHex, setPickerHex] = useState('#000000')
   const [hexInput, setHexInput] = useState('')
   const dragRef = useRef<{ startX: number; startY: number; panelX: number; panelY: number } | null>(null)
+  const pendingOverridesRef = useRef(pendingOverrides)
+  pendingOverridesRef.current = pendingOverrides
 
   // Sync picker when selected key changes
   useEffect(() => {
     if (!selectedKey) return
-    const current = pendingOverrides[selectedKey as string] ?? LIGHT_COLORS[selectedKey]
+    const current = pendingOverridesRef.current[selectedKey as string] ?? LIGHT_COLORS[selectedKey]
     const hex = toHex(current)
     setPickerHex(hex)
     setHexInput(hex)
@@ -123,8 +128,8 @@ export function ThemeColorEditor() {
     function onMove(ev: MouseEvent) {
       if (!dragRef.current) return
       setPosition({
-        x: dragRef.current.panelX + ev.clientX - dragRef.current.startX,
-        y: dragRef.current.panelY + ev.clientY - dragRef.current.startY,
+        x: Math.max(0, Math.min(window.innerWidth - 264, dragRef.current.panelX + ev.clientX - dragRef.current.startX)),
+        y: Math.max(0, Math.min(window.innerHeight - 60, dragRef.current.panelY + ev.clientY - dragRef.current.startY)),
       })
     }
     function onUp() {
@@ -147,8 +152,9 @@ export function ThemeColorEditor() {
 
   function handleHexInput(value: string) {
     setHexInput(value)
-    if (colord(value).isValid()) {
-      const hex = colord(value).toHex()
+    const normalized = value.startsWith('#') ? value : `#${value}`
+    if (colord(normalized).isValid()) {
+      const hex = colord(normalized).toHex()
       setPickerHex(hex)
       if (selectedKey) {
         setPendingOverrides(prev => ({ ...prev, [selectedKey]: hex }))
@@ -161,6 +167,7 @@ export function ThemeColorEditor() {
     setPendingOverrides(prev => {
       const next = { ...prev }
       delete next[key]
+      pendingOverridesRef.current = next  // keep ref in sync immediately
       return next
     })
     if (selectedKey === key) {
