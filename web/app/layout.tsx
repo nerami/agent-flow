@@ -30,11 +30,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
-      {/* Apply .dark before first paint to prevent flash of wrong theme */}
+    <html className="light" lang="en">
+      {/* Apply .dark before first paint to prevent flash of wrong theme.
+          Saved choice in localStorage wins; otherwise follow system preference. */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.classList.add('dark')}`,
+          __html: `try{var t=localStorage.getItem('theme')}catch(e){}var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark')}`,
         }}
       />
       <body className="font-sans antialiased bg-background">
