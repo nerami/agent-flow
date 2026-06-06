@@ -111,6 +111,7 @@ export function ThemeColorEditor() {
   const [pickerHex, setPickerHex] = useState('#000000')
   const [hexInput, setHexInput] = useState('')
   const dragRef = useRef<{ startX: number; startY: number; panelX: number; panelY: number } | null>(null)
+  const didDragRef = useRef(false)
   const pendingOverridesRef = useRef(pendingOverrides)
   pendingOverridesRef.current = pendingOverrides
 
@@ -125,11 +126,15 @@ export function ThemeColorEditor() {
 
   function handleMouseDown(e: React.MouseEvent) {
     dragRef.current = { startX: e.clientX, startY: e.clientY, panelX: position.x, panelY: position.y }
+    didDragRef.current = false
     function onMove(ev: MouseEvent) {
       if (!dragRef.current) return
+      const dx = ev.clientX - dragRef.current.startX
+      const dy = ev.clientY - dragRef.current.startY
+      if (Math.abs(dx) > 3 || Math.abs(dy) > 3) didDragRef.current = true
       setPosition({
-        x: Math.max(0, Math.min(window.innerWidth - 264, dragRef.current.panelX + ev.clientX - dragRef.current.startX)),
-        y: Math.max(0, Math.min(window.innerHeight - 60, dragRef.current.panelY + ev.clientY - dragRef.current.startY)),
+        x: Math.max(0, Math.min(window.innerWidth - 264, dragRef.current.panelX + dx)),
+        y: Math.max(0, Math.min(window.innerHeight - 60, dragRef.current.panelY + dy)),
       })
     }
     function onUp() {
@@ -167,7 +172,6 @@ export function ThemeColorEditor() {
     setPendingOverrides(prev => {
       const next = { ...prev }
       delete next[key]
-      pendingOverridesRef.current = next  // keep ref in sync immediately
       return next
     })
     if (selectedKey === key) {
@@ -192,7 +196,8 @@ export function ThemeColorEditor() {
   if (minimized) {
     return (
       <div
-        onClick={() => setMinimized(false)}
+        onMouseDown={handleMouseDown}
+        onClick={() => { if (!didDragRef.current) setMinimized(false) }}
         style={{
           position: 'fixed',
           left: position.x,
