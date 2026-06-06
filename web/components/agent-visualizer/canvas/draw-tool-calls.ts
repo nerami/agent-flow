@@ -39,8 +39,8 @@ export function drawToolCalls(
     ctx.beginPath()
     ctx.roundRect(cardX, cardY, cardW, cardH, TOOL_DRAW.borderRadius)
     ctx.fillStyle = isError
-      ? withAlpha(colors.toolCardErrorBase, 0.8 * pulse)
-      : isSelected ? withAlpha(colors.toolCardSelectedBase, 0.15 * pulse) : withAlpha(colors.toolCardBase, 0.7 * pulse)
+      ? withAlpha(colors.toolCardError, 0.8 * pulse)
+      : isSelected ? withAlpha(colors.toolCardSelected, 0.15 * pulse) : withAlpha(colors.toolCard, 0.7 * pulse)
     ctx.fill()
     ctx.strokeStyle = isError
       ? colors.error + '90'

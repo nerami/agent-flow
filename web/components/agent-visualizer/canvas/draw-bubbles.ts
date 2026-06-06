@@ -28,7 +28,7 @@ export function drawMessageBubblesWorld(
       const { role, text } = bubble
 
       const isThinking = role === 'thinking'
-      const bgColor = isThinking ? colors.bubbleThinkingBase : role === 'user' ? colors.bubbleUserBase : colors.bubbleAssistantBase
+      const bgColor = isThinking ? colors.bubbleThinking : role === 'user' ? colors.bubbleUser : colors.bubbleAssistant
       const textColor = isThinking ? colors.roleThinkingText : role === 'user' ? colors.roleUserText : colors.roleAssistantText
       const label = isThinking ? '\uD83D\uDCAD THINKING' : role === 'user' ? 'USER' : 'CLAUDE'
 

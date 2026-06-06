@@ -5,6 +5,7 @@
  * All colors re-exported from here for backward compatibility.
  */
 
+import { colord } from 'colord'
 import type { AgentState, ContextBreakdown } from './agent-types'
 
 // ─── Dark palette (original) ─────────────────────────────────────────────────
@@ -121,15 +122,15 @@ export const DARK_COLORS = {
   // Cost overlay
   costActiveBg: 'rgba(102, 255, 170, 0.15)',
 
-  // Canvas drawing — bubble base colors (partial rgba, alpha appended at draw time)
-  bubbleThinkingBase: 'rgba(140, 100, 200,',
-  bubbleUserBase: 'rgba(200, 160, 80,',
-  bubbleAssistantBase: 'rgba(80, 160, 220,',
+  // Canvas drawing — bubble base colors
+  bubbleThinking: 'rgb(140, 100, 200)',
+  bubbleUser: 'rgb(200, 160, 80)',
+  bubbleAssistant: 'rgb(80, 160, 220)',
 
-  // Canvas drawing — tool card backgrounds (partial rgba, alpha appended at draw time)
-  toolCardErrorBase: 'rgba(40, 10, 15,',
-  toolCardSelectedBase: 'rgba(100, 200, 255,',
-  toolCardBase: 'rgba(10, 15, 30,',
+  // Canvas drawing — tool card backgrounds
+  toolCardError: 'rgb(40, 10, 15)',
+  toolCardSelected: 'rgb(100, 200, 255)',
+  toolCard: 'rgb(10, 15, 30)',
 
   // Canvas drawing — agent/tool card backgrounds
   cardBgDark: 'rgba(5, 5, 16, 0.8)',
@@ -332,15 +333,15 @@ export const LIGHT_COLORS = {
   // Cost overlay
   costActiveBg: 'rgba(102, 255, 170, 0.15)',
 
-  // Canvas drawing — bubble base colors (partial rgba, alpha appended at draw time)
-  bubbleThinkingBase: 'rgba(140, 100, 200,',
-  bubbleUserBase: 'rgba(200, 160, 80,',
-  bubbleAssistantBase: 'rgba(80, 160, 220,',
+  // Canvas drawing — bubble base colors
+  bubbleThinking: 'rgb(140, 100, 200)',
+  bubbleUser: 'rgb(200, 160, 80)',
+  bubbleAssistant: 'rgb(80, 160, 220)',
 
-  // Canvas drawing — tool card backgrounds (partial rgba, alpha appended at draw time)
-  toolCardErrorBase: 'rgba(40, 10, 15,',
-  toolCardSelectedBase: 'rgba(100, 200, 255,',
-  toolCardBase: 'rgba(10, 15, 30,',
+  // Canvas drawing — tool card backgrounds
+  toolCardError: 'rgb(40, 10, 15)',
+  toolCardSelected: 'rgb(100, 200, 255)',
+  toolCard: 'rgb(10, 15, 30)',
 
   // Canvas drawing — agent/tool card backgrounds
   cardBgDark: 'rgba(5, 5, 16, 0.8)',
@@ -471,9 +472,9 @@ export function getDiscoveryTypeColor(type: string, colors: ColorPalette = DARK_
   }
 }
 
-/** Safely combine a partial rgba base (e.g. 'rgba(10, 15, 30,') with an alpha value */
-export function withAlpha(rgbaBase: string, alpha: number): string {
-  return `${rgbaBase} ${alpha})`
+/** Apply alpha to a complete color string using colord */
+export function withAlpha(color: string, alpha: number): string {
+  return colord(color).alpha(alpha).toRgbString()
 }
 
 /** Build the context-breakdown color segments for a given breakdown. */
