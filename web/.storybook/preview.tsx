@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react'
-import type { Decorator } from '@storybook/react'
-import { useGlobals } from 'storybook/preview-api'
-import { DARK_COLORS, LIGHT_COLORS, type ColorPalette } from '@/lib/colors'
-import { createContext } from 'react'
+import { useEffect, createContext, type ReactElement } from 'react'
+import { DARK_COLORS, LIGHT_COLORS, type ColorPalette } from '../lib/colors'
+// @ts-expect-error — CSS module not typed in this context
 import '../app/globals.css'
 
 export const StoryColorsContext = createContext<ColorPalette>(DARK_COLORS)
@@ -23,9 +21,8 @@ export const globalTypes = {
   },
 }
 
-const withTheme: Decorator = (Story, context) => {
-  const [globals] = useGlobals()
-  const isDark = (globals.theme ?? 'dark') !== 'light'
+const withTheme = (Story: () => ReactElement, context: { globals: Record<string, string> }) => {
+  const isDark = (context.globals['theme'] ?? 'dark') !== 'light'
   const colors: ColorPalette = isDark ? DARK_COLORS : LIGHT_COLORS
 
   useEffect(() => {
