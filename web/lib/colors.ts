@@ -221,214 +221,226 @@ export const DARK_COLORS = {
 
 // ─── Light palette ────────────────────────────────────────────────────────────
 
+const COLOR_RE = /#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)/g
+
+export function transformColor(color: string, options?: Record<string, unknown>): string {
+  if (colord(color).isValid()) {
+    return colord(color).toRgbString()
+  }
+  return color.replace(COLOR_RE, (match) => {
+    const c = colord(match)
+    return c.isValid() ? c.toRgbString() : match
+  })
+}
+
 export const LIGHT_COLORS = {
   // Background
-  void: '#050510',
-  hexGrid: '#0d0d1f',
+  void: transformColor('#050510'),
+  hexGrid: transformColor('#0d0d1f'),
 
   // Primary Hologram
-  holoBase: '#66ccff',
-  holoBright: '#aaeeff',
-  holoHot: '#ffffff',
+  holoBase: transformColor('#66ccff'),
+  holoBright: transformColor('#aaeeff'),
+  holoHot: transformColor('#ffffff'),
 
   // Agent States
-  idle: '#66ccff',
-  thinking: '#66ccff',
-  tool_calling: '#ffbb44',
-  complete: '#66ffaa',
-  error: '#ff5566',
-  paused: '#888899',
-  waiting_permission: '#ffaa33',
+  idle: transformColor('#66ccff'),
+  thinking: transformColor('#66ccff'),
+  tool_calling: transformColor('#ffbb44'),
+  complete: transformColor('#66ffaa'),
+  error: transformColor('#ff5566'),
+  paused: transformColor('#888899'),
+  waiting_permission: transformColor('#ffaa33'),
 
   // Edge/Particle Colors
-  dispatch: '#cc88ff',
-  return: '#66ffaa',
-  tool: '#ffbb44',
-  message: '#66ccff',
+  dispatch: transformColor('#cc88ff'),
+  return: transformColor('#66ffaa'),
+  tool: transformColor('#ffbb44'),
+  message: transformColor('#66ccff'),
 
   // Context breakdown colors
-  contextSystem: '#555577',
-  contextUser: '#66ccff',
-  contextToolResults: '#ffbb44',
-  contextReasoning: '#cc88ff',
-  contextSubagent: '#66ffaa',
+  contextSystem: transformColor('#555577'),
+  contextUser: transformColor('#66ccff'),
+  contextToolResults: transformColor('#ffbb44'),
+  contextReasoning: transformColor('#cc88ff'),
+  contextSubagent: transformColor('#66ffaa'),
 
   // UI Chrome
-  nodeInterior: 'rgba(10, 15, 40, 0.5)',
-  textPrimary: '#aaeeff',
-  textDim: '#66ccff90',
-  textMuted: '#66ccff50',
+  nodeInterior: transformColor('rgba(10, 15, 40, 0.5)'),
+  textPrimary: transformColor('#aaeeff'),
+  textDim: transformColor('#66ccff90'),
+  textMuted: transformColor('#66ccff50'),
 
   // Glass card
-  glassBg: 'rgba(10, 15, 30, 0.7)',
-  glassBorder: 'rgba(100, 200, 255, 0.15)',
-  glassHighlight: 'rgba(100, 200, 255, 0.08)',
+  glassBg: transformColor('rgba(10, 15, 30, 0.7)'),
+  glassBorder: transformColor('rgba(100, 200, 255, 0.15)'),
+  glassHighlight: transformColor('rgba(100, 200, 255, 0.08)'),
 
   // Holo background/border opacities (avoids scattered rgba literals)
-  holoBg03: 'rgba(100, 200, 255, 0.03)',
-  holoBg05: 'rgba(100, 200, 255, 0.05)',
-  holoBg10: 'rgba(100, 200, 255, 0.1)',
-  holoBorder06: 'rgba(100, 200, 255, 0.06)',
-  holoBorder08: 'rgba(100, 200, 255, 0.08)',
-  holoBorder10: 'rgba(100, 200, 255, 0.1)',
-  holoBorder12: 'rgba(100, 200, 255, 0.12)',
+  holoBg03: transformColor('rgba(100, 200, 255, 0.03)'),
+  holoBg05: transformColor('rgba(100, 200, 255, 0.05)'),
+  holoBg10: transformColor('rgba(100, 200, 255, 0.1)'),
+  holoBorder06: transformColor('rgba(100, 200, 255, 0.06)'),
+  holoBorder08: transformColor('rgba(100, 200, 255, 0.08)'),
+  holoBorder10: transformColor('rgba(100, 200, 255, 0.1)'),
+  holoBorder12: transformColor('rgba(100, 200, 255, 0.12)'),
 
   // Panel chrome
-  panelBg: 'rgba(8, 12, 24, 0.85)',
-  panelSeparator: 'rgba(100, 200, 255, 0.04)',
+  panelBg: transformColor('rgba(8, 12, 24, 0.85)'),
+  panelSeparator: transformColor('rgba(100, 200, 255, 0.04)'),
 
   // Toggle button states
-  toggleActive: 'rgba(100, 200, 255, 0.15)',
-  toggleInactive: 'rgba(100, 200, 255, 0.05)',
-  toggleBorder: 'rgba(100, 200, 255, 0.1)',
+  toggleActive: transformColor('rgba(100, 200, 255, 0.15)'),
+  toggleInactive: transformColor('rgba(100, 200, 255, 0.05)'),
+  toggleBorder: transformColor('rgba(100, 200, 255, 0.1)'),
 
   // Live indicator
-  liveDot: '#ff4444',
-  liveText: '#ff6666',
-  liveResumeBg: 'rgba(255, 68, 68, 0.15)',
-  liveResumeBorder: 'rgba(255, 68, 68, 0.35)',
+  liveDot: transformColor('#ff4444'),
+  liveText: transformColor('#ff6666'),
+  liveResumeBg: transformColor('rgba(255, 68, 68, 0.15)'),
+  liveResumeBorder: transformColor('rgba(255, 68, 68, 0.35)'),
 
   // Discovery type colors
-  discoveryFile: '#66ccff',
-  discoveryPattern: '#cc88ff',
-  discoveryFinding: '#66ffaa',
-  discoveryCode: '#ffbb44',
+  discoveryFile: transformColor('#66ccff'),
+  discoveryPattern: transformColor('#cc88ff'),
+  discoveryFinding: transformColor('#66ffaa'),
+  discoveryCode: transformColor('#ffbb44'),
 
   // Session tab states
-  tabSelectedBg: 'rgba(100, 200, 255, 0.15)',
-  tabInactiveBg: 'rgba(100, 200, 255, 0.03)',
-  tabSelectedBorder: 'rgba(100, 200, 255, 0.3)',
-  tabInactiveBorder: 'rgba(100, 200, 255, 0.08)',
-  tabClose: '#ff6688',
+  tabSelectedBg: transformColor('rgba(100, 200, 255, 0.15)'),
+  tabInactiveBg: transformColor('rgba(100, 200, 255, 0.03)'),
+  tabSelectedBorder: transformColor('rgba(100, 200, 255, 0.3)'),
+  tabInactiveBorder: transformColor('rgba(100, 200, 255, 0.08)'),
+  tabClose: transformColor('#ff6688'),
 
   // Role colors (message bubbles)
-  roleAssistantBg: 'rgba(80, 160, 220, 0.12)',
-  roleAssistantBgSelected: 'rgba(80, 160, 220, 0.2)',
-  roleAssistantText: '#a0d4f0',
-  roleThinkingBg: 'rgba(140, 100, 200, 0.12)',
-  roleThinkingBgSelected: 'rgba(140, 100, 200, 0.2)',
-  roleThinkingText: '#c0a0e0',
-  roleUserBg: 'rgba(200, 160, 80, 0.12)',
-  roleUserBgSelected: 'rgba(200, 160, 80, 0.2)',
-  roleUserText: '#e0c888',
+  roleAssistantBg: transformColor('rgba(80, 160, 220, 0.12)'),
+  roleAssistantBgSelected: transformColor('rgba(80, 160, 220, 0.2)'),
+  roleAssistantText: transformColor('#a0d4f0'),
+  roleThinkingBg: transformColor('rgba(140, 100, 200, 0.12)'),
+  roleThinkingBgSelected: transformColor('rgba(140, 100, 200, 0.2)'),
+  roleThinkingText: transformColor('#c0a0e0'),
+  roleUserBg: transformColor('rgba(200, 160, 80, 0.12)'),
+  roleUserBgSelected: transformColor('rgba(200, 160, 80, 0.2)'),
+  roleUserText: transformColor('#e0c888'),
 
   // Result/success
-  resultBg: 'rgba(102, 255, 170, 0.05)',
-  resultBorder: 'rgba(102, 255, 170, 0.1)',
+  resultBg: transformColor('rgba(102, 255, 170, 0.05)'),
+  resultBorder: transformColor('rgba(102, 255, 170, 0.1)'),
 
   // Unread indicator
-  unreadDot: '#ff6666',
+  unreadDot: transformColor('#ff6666'),
 
   // Play button
-  playBtnBg: 'rgba(102, 204, 255, 0.12)',
-  playBtnActiveBg: 'rgba(102, 204, 255, 0.2)',
-  playBtnBorder: 'rgba(102, 204, 255, 0.4)',
-  playBtnGlow: '0 0 12px rgba(102, 204, 255, 0.15)',
+  playBtnBg: transformColor('rgba(102, 204, 255, 0.12)'),
+  playBtnActiveBg: transformColor('rgba(102, 204, 255, 0.2)'),
+  playBtnBorder: transformColor('rgba(102, 204, 255, 0.4)'),
+  playBtnGlow: `0 0 12px ${transformColor('rgba(102, 204, 255, 0.15)')}`,
 
   // Scrubber
-  scrubberFill: 'linear-gradient(90deg, rgba(102,204,255,0.3), rgba(102,204,255,0.6))',
-  scrubberHeadGlow: '0 0 10px rgba(102, 204, 255, 0.6), 0 0 20px rgba(102, 204, 255, 0.2)',
-  reviewBtnBorder: 'rgba(102, 204, 255, 0.25)',
+  scrubberFill: `linear-gradient(90deg, ${transformColor('rgba(102,204,255,0.3)')}, ${transformColor('rgba(102,204,255,0.6)')})`,
+  scrubberHeadGlow: `0 0 10px ${transformColor('rgba(102, 204, 255, 0.6)')}, 0 0 20px ${transformColor('rgba(102, 204, 255, 0.2)')}`,
+  reviewBtnBorder: transformColor('rgba(102, 204, 255, 0.25)'),
 
   // Cost overlay
-  costActiveBg: 'rgba(102, 255, 170, 0.15)',
+  costActiveBg: transformColor('rgba(102, 255, 170, 0.15)'),
 
   // Canvas drawing — bubble base colors
-  bubbleThinking: 'rgb(140, 100, 200)',
-  bubbleUser: 'rgb(200, 160, 80)',
-  bubbleAssistant: 'rgb(80, 160, 220)',
+  bubbleThinking: transformColor('rgb(140, 100, 200)'),
+  bubbleUser: transformColor('rgb(200, 160, 80)'),
+  bubbleAssistant: transformColor('rgb(80, 160, 220)'),
 
   // Canvas drawing — tool card backgrounds
-  toolCardError: 'rgb(40, 10, 15)',
-  toolCardSelected: 'rgb(100, 200, 255)',
-  toolCard: 'rgb(10, 15, 30)',
+  toolCardError: transformColor('rgb(40, 10, 15)'),
+  toolCardSelected: transformColor('rgb(100, 200, 255)'),
+  toolCard: transformColor('rgb(10, 15, 30)'),
 
   // Canvas drawing — agent/tool card backgrounds
-  cardBgDark: 'rgba(5, 5, 16, 0.8)',
-  cardBg: 'rgba(10, 15, 30, 0.6)',
-  cardBgSelected: 'rgba(10, 15, 30, 0.8)',
-  cardBgError: 'rgba(40, 10, 15, 0.8)',
-  cardBgSelectedHolo: 'rgba(100, 200, 255, 0.15)',
-  cardBgFaintOverlay: 'rgba(0, 0, 0, 0.01)',
+  cardBgDark: transformColor('rgba(5, 5, 16, 0.8)'),
+  cardBg: transformColor('rgba(10, 15, 30, 0.6)'),
+  cardBgSelected: transformColor('rgba(10, 15, 30, 0.8)'),
+  cardBgError: transformColor('rgba(40, 10, 15, 0.8)'),
+  cardBgSelectedHolo: transformColor('rgba(100, 200, 255, 0.15)'),
+  cardBgFaintOverlay: transformColor('rgba(0, 0, 0, 0.01)'),
 
   // Active tool indicator (detail card)
-  toolIndicatorBg: 'rgba(255, 187, 68, 0.1)',
-  toolIndicatorBorder: 'rgba(255, 187, 68, 0.2)',
-  toolIndicatorText: '#ffbb44',
+  toolIndicatorBg: transformColor('rgba(255, 187, 68, 0.1)'),
+  toolIndicatorBorder: transformColor('rgba(255, 187, 68, 0.2)'),
+  toolIndicatorText: transformColor('#ffbb44'),
 
   // Canvas drawing — cost labels
-  costText: '#66ffaa',
-  costTextDim: '#66ffaa80',
-  costPillBg: 'rgba(10, 20, 40, 0.75)',
-  costPillStroke: 'rgba(102, 255, 170, 0.3)',
+  costText: transformColor('#66ffaa'),
+  costTextDim: transformColor('#66ffaa80'),
+  costPillBg: transformColor('rgba(10, 20, 40, 0.75)'),
+  costPillStroke: transformColor('rgba(102, 255, 170, 0.3)'),
 
   // Canvas drawing — cost panel bar fills
-  barFillMain: 'rgba(102, 204, 255, 0.15)',
-  barFillSub: 'rgba(204, 136, 255, 0.15)',
+  barFillMain: transformColor('rgba(102, 204, 255, 0.15)'),
+  barFillSub: transformColor('rgba(204, 136, 255, 0.15)'),
 
   // ─── Transcript / message feed colors ───────────────────────────────────────
 
   // User messages
-  userMsgBg: 'rgba(255, 187, 68, 0.06)',
-  userMsgBorder: 'rgba(255, 187, 68, 0.12)',
-  userLabel: '#ffbb4490',
-  userText: '#ffcc66',
+  userMsgBg: transformColor('rgba(255, 187, 68, 0.06)'),
+  userMsgBorder: transformColor('rgba(255, 187, 68, 0.12)'),
+  userLabel: transformColor('#ffbb4490'),
+  userText: transformColor('#ffcc66'),
 
   // Assistant messages
-  assistantLabel: '#66ccff80',
-  assistantText: '#aaeeff',
+  assistantLabel: transformColor('#66ccff80'),
+  assistantText: transformColor('#aaeeff'),
 
   // Thinking messages
-  thinkingBgExpanded: 'rgba(180, 140, 255, 0.06)',
-  thinkingBgCollapsed: 'rgba(180, 140, 255, 0.03)',
-  thinkingBorder: 'rgba(180, 140, 255, 0.08)',
-  thinkingLabel: '#bb99ff70',
-  thinkingArrow: '#bb99ff55',
-  thinkingPreview: '#bb99ff',
-  thinkingTextExpanded: '#bb99ff80',
-  thinkingBorderLeft: 'rgba(180, 140, 255, 0.15)',
+  thinkingBgExpanded: transformColor('rgba(180, 140, 255, 0.06)'),
+  thinkingBgCollapsed: transformColor('rgba(180, 140, 255, 0.03)'),
+  thinkingBorder: transformColor('rgba(180, 140, 255, 0.08)'),
+  thinkingLabel: transformColor('#bb99ff70'),
+  thinkingArrow: transformColor('#bb99ff55'),
+  thinkingPreview: transformColor('#bb99ff'),
+  thinkingTextExpanded: transformColor('#bb99ff80'),
+  thinkingBorderLeft: transformColor('rgba(180, 140, 255, 0.15)'),
 
   // Tool call messages
-  toolCallBg: 'rgba(255, 187, 68, 0.05)',
-  toolCallBorder: 'rgba(255, 187, 68, 0.1)',
+  toolCallBg: transformColor('rgba(255, 187, 68, 0.05)'),
+  toolCallBorder: transformColor('rgba(255, 187, 68, 0.1)'),
 
   // Tool result messages
-  bashResultBg: 'rgba(0,0,0,0.25)',
-  toolResultBg: 'rgba(102, 255, 170, 0.04)',
-  bashResultBorder: 'rgba(255, 187, 68, 0.1)',
-  toolResultBorder: 'rgba(102, 255, 170, 0.08)',
-  bashResultText: '#aaeeff80',
-  toolResultText: '#66ffaa80',
-  textFaint: '#aaeeff60',
+  bashResultBg: transformColor('rgba(0,0,0,0.25)'),
+  toolResultBg: transformColor('rgba(102, 255, 170, 0.04)'),
+  bashResultBorder: transformColor('rgba(255, 187, 68, 0.1)'),
+  toolResultBorder: transformColor('rgba(102, 255, 170, 0.08)'),
+  bashResultText: transformColor('#aaeeff80'),
+  toolResultText: transformColor('#66ffaa80'),
+  textFaint: transformColor('#aaeeff60'),
 
   // Search highlight
-  searchHighlightBg: 'rgba(255,187,68,0.3)',
+  searchHighlightBg: transformColor('rgba(255,187,68,0.3)'),
 
   // ─── Diff / code block colors ───────────────────────────────────────────────
 
-  codeBlockBg: 'rgba(0,0,0,0.3)',
-  diffRemoved: '#ff6666',
-  diffRemovedBg: 'rgba(255,80,80,0.08)',
-  diffAdded: '#66ff88',
-  diffAddedBg: 'rgba(80,255,120,0.08)',
+  codeBlockBg: transformColor('rgba(0,0,0,0.3)'),
+  diffRemoved: transformColor('#ff6666'),
+  diffRemovedBg: transformColor('rgba(255,80,80,0.08)'),
+  diffAdded: transformColor('#66ff88'),
+  diffAddedBg: transformColor('rgba(80,255,120,0.08)'),
 
   // ─── Tool content colors ────────────────────────────────────────────────────
 
-  filePathActive: '#66ccff',
-  filePathInactive: '#66ccff90',
-  todoCompleted: '#66ffaa',
-  todoCompletedText: '#66ffaa90',
-  todoPending: '#66ccff60',
-  contentDim: '#aaeeff90',
-  searchIcon: '#66ccff60',
+  filePathActive: transformColor('#66ccff'),
+  filePathInactive: transformColor('#66ccff90'),
+  todoCompleted: transformColor('#66ffaa'),
+  todoCompletedText: transformColor('#66ffaa90'),
+  todoPending: transformColor('#66ccff60'),
+  contentDim: transformColor('#aaeeff90'),
+  searchIcon: transformColor('#66ccff60'),
 
   // ─── Panel header / chrome text ─────────────────────────────────────────────
 
-  panelLabel: '#66ccff90',
-  panelLabelDim: '#66ccff65',
-  scrollBtnText: '#66ccff',
-  scrollbarThumb: 'rgba(100,200,255,0.15)',
-} as const
+  panelLabel: transformColor('#66ccff90'),
+  panelLabelDim: transformColor('#66ccff65'),
+  scrollBtnText: transformColor('#66ccff'),
+  scrollbarThumb: transformColor('rgba(100,200,255,0.15)'),
+}
 
 /** Backward-compat alias — existing code importing COLORS gets dark palette. */
 export const COLORS = DARK_COLORS
