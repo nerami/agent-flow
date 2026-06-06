@@ -35,7 +35,7 @@ export default function RootLayout({
           Saved choice in localStorage wins; otherwise follow system preference. */}
       <script
         dangerouslySetInnerHTML={{
-          __html: `try{var t=localStorage.getItem('theme')}catch(e){}var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark')}`,
+          __html: `var t;try{t=localStorage.getItem('theme')}catch(e){}var d=t==='dark'?true:t==='light'?false:window.matchMedia('(prefers-color-scheme: dark)').matches;if(d){document.documentElement.classList.add('dark')}`,
         }}
       />
       <body className="font-sans antialiased bg-background">
