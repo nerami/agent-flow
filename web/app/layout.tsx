@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html className="light" lang="en">
+    <html lang="en">
       {/* Apply .dark before first paint to prevent flash of wrong theme.
           Saved choice in localStorage wins; otherwise follow system preference. */}
       <script

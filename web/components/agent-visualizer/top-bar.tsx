@@ -57,6 +57,16 @@ function MoonIcon() {
   )
 }
 
+function MonitorIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+      <line x1="8" y1="21" x2="16" y2="21" />
+      <line x1="12" y1="17" x2="12" y2="21" />
+    </svg>
+  )
+}
+
 // ─── Toggle Button ──────────────────────────────────────────────────────────
 
 function ToggleButton({ active, onClick, children, style, activeColor }: {
@@ -139,7 +149,7 @@ export const TopBar = memo(function TopBar({
   showFileAttention, showTranscript, showCostOverlay, showTimeline, isMuted,
   onTogglePanel, onToggleTimeline, onToggleMute,
 }: TopBarProps) {
-  const { isDark, toggleTheme } = useTheme()
+  const { isDark, preference, cycleTheme } = useTheme()
   const COLORS = getColors(isDark)
   return (
     <div className="absolute top-3 left-3 right-3 flex items-center gap-4 font-mono text-[10px]" style={{ zIndex: Z.info }}>
@@ -192,8 +202,10 @@ export const TopBar = memo(function TopBar({
         <ToggleButton active={!isMuted} onClick={onToggleMute} style={{ border: `1px solid ${COLORS.toggleBorder}` }}>
           {isMuted ? <MutedIcon /> : <UnmutedIcon />}
         </ToggleButton>
-        <ToggleButton active={!isDark} onClick={toggleTheme} style={{ border: `1px solid ${COLORS.toggleBorder}` }}>
-          {isDark ? <MoonIcon /> : <SunIcon />}
+        <ToggleButton active={preference !== 'system'} onClick={cycleTheme} style={{ border: `1px solid ${COLORS.toggleBorder}` }}>
+          <span title={`Theme: ${preference}`}>
+            {preference === 'light' ? <SunIcon /> : preference === 'dark' ? <MoonIcon /> : <MonitorIcon />}
+          </span>
         </ToggleButton>
       </div>
     </div>
