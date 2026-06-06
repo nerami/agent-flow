@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Wheel from '@uiw/react-color-wheel'
+import Sketch from '@uiw/react-color-sketch'
+import type { ColorResult } from '@uiw/color-convert'
 import { colord } from 'colord'
 import { LIGHT_COLORS } from '../../lib/colors'
 
@@ -109,7 +110,6 @@ export function ThemeColorEditor() {
   const [selectedKey, setSelectedKey] = useState<keyof typeof LIGHT_COLORS | null>(null)
   const [pendingOverrides, setPendingOverrides] = useState<Record<string, string>>(loadOverrides)
   const [pickerHex, setPickerHex] = useState('#000000')
-  const [hexInput, setHexInput] = useState('')
   const dragRef = useRef<{ startX: number; startY: number; panelX: number; panelY: number } | null>(null)
   const didDragRef = useRef(false)
   const pendingOverridesRef = useRef(pendingOverrides)
@@ -121,7 +121,6 @@ export function ThemeColorEditor() {
     const current = pendingOverridesRef.current[selectedKey as string] ?? LIGHT_COLORS[selectedKey]
     const hex = toHex(current)
     setPickerHex(hex)
-    setHexInput(hex)
   }, [selectedKey])
 
   function handleMouseDown(e: React.MouseEvent) {
@@ -146,24 +145,11 @@ export function ThemeColorEditor() {
     window.addEventListener('mouseup', onUp)
   }
 
-  function handleWheelChange(color: { hex: string }) {
+  function handleSketchChange(color: ColorResult) {
     const hex = color.hex
     setPickerHex(hex)
-    setHexInput(hex)
     if (selectedKey) {
       setPendingOverrides(prev => ({ ...prev, [selectedKey]: hex }))
-    }
-  }
-
-  function handleHexInput(value: string) {
-    setHexInput(value)
-    const normalized = value.startsWith('#') ? value : `#${value}`
-    if (colord(normalized).isValid()) {
-      const hex = colord(normalized).toHex()
-      setPickerHex(hex)
-      if (selectedKey) {
-        setPendingOverrides(prev => ({ ...prev, [selectedKey]: hex }))
-      }
     }
   }
 
@@ -175,9 +161,7 @@ export function ThemeColorEditor() {
       return next
     })
     if (selectedKey === key) {
-      const hex = toHex(LIGHT_COLORS[key as keyof typeof LIGHT_COLORS])
-      setPickerHex(hex)
-      setHexInput(hex)
+      setPickerHex(toHex(LIGHT_COLORS[key as keyof typeof LIGHT_COLORS]))
     }
   }
 
@@ -365,30 +349,10 @@ export function ThemeColorEditor() {
           <div style={{ color: '#66ccff60', fontSize: 8, textTransform: 'uppercase', letterSpacing: 1, alignSelf: 'flex-start' }}>
             Editing: <span style={{ color: '#aaeeff' }}>{selectedKey as string}</span>
           </div>
-          <Wheel
+          <Sketch
             color={pickerHex}
-            onChange={handleWheelChange}
-            width={120}
-            height={120}
+            onChange={handleSketchChange}
           />
-          <div style={{ display: 'flex', gap: 6, alignItems: 'center', width: '100%' }}>
-            <div style={{ width: 18, height: 18, borderRadius: 3, background: pickerHex, border: '1px solid rgba(255,255,255,0.2)', flexShrink: 0 }} />
-            <input
-              value={hexInput}
-              onChange={e => handleHexInput(e.target.value)}
-              style={{
-                flex: 1,
-                background: 'rgba(0,0,0,0.3)',
-                border: '1px solid rgba(100,200,255,0.15)',
-                borderRadius: 4,
-                padding: '4px 8px',
-                color: '#aaeeff',
-                fontSize: 10,
-                fontFamily: 'monospace',
-                outline: 'none',
-              }}
-            />
-          </div>
         </div>
       )}
 
