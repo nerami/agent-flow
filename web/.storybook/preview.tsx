@@ -1,9 +1,8 @@
-import { useEffect, createContext, type ReactElement } from 'react'
+import { useEffect, type ReactElement } from 'react'
 import { DARK_COLORS, LIGHT_COLORS, type ColorPalette } from '../lib/colors'
+import { StoryColorsContext } from '../stories/utils/story-colors-context'
 // @ts-expect-error — CSS module not typed in this context
 import '../app/globals.css'
-
-export const StoryColorsContext = createContext<ColorPalette>(DARK_COLORS)
 
 export const globalTypes = {
   theme: {
