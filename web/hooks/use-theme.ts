@@ -39,7 +39,8 @@ function attachSystemListener() {
     .matchMedia('(prefers-color-scheme: dark)')
     .addEventListener('change', (e) => {
       try {
-        if (localStorage.getItem('theme') !== null) return
+        const t = localStorage.getItem('theme')
+        if (t === 'dark' || t === 'light') return
       } catch {
         // fall through — without storage there can be no saved choice
       }
