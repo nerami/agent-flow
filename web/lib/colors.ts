@@ -223,13 +223,20 @@ export const DARK_COLORS = {
 
 const COLOR_RE = /#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)/g
 
-export function transformColor(color: string, options?: Record<string, unknown>): string {
-  if (colord(color).isValid()) {
-    return colord(color).toRgbString()
+export interface TransformColorOptions {
+  opacity?: number
+}
+
+export function transformColor(color: string, options?: TransformColorOptions): string {
+  let c = colord(color)
+  if (c.isValid()) {
+    if (options?.opacity !== undefined) c = c.alpha(options.opacity)
+    return c.toRgbString()
   }
+  
   return color.replace(COLOR_RE, (match) => {
-    const c = colord(match)
-    return c.isValid() ? c.toRgbString() : match
+    const m = colord(match)
+    return m.isValid() ? m.toRgbString() : match
   })
 }
 
@@ -266,39 +273,39 @@ export const LIGHT_COLORS = {
   contextSubagent: transformColor('#66ffaa'),
 
   // UI Chrome
-  nodeInterior: transformColor('rgba(10, 15, 40, 0.5)'),
+  nodeInterior: transformColor('rgb(10, 15, 40)', { opacity: 0.5 }),
   textPrimary: transformColor('#aaeeff'),
-  textDim: transformColor('#66ccff90'),
-  textMuted: transformColor('#66ccff50'),
+  textDim: transformColor('#66ccff', { opacity: 0.56 }),
+  textMuted: transformColor('#66ccff', { opacity: 0.31 }),
 
   // Glass card
-  glassBg: transformColor('rgba(10, 15, 30, 0.7)'),
-  glassBorder: transformColor('rgba(100, 200, 255, 0.15)'),
-  glassHighlight: transformColor('rgba(100, 200, 255, 0.08)'),
+  glassBg: transformColor('rgb(10, 15, 30)', { opacity: 0.7 }),
+  glassBorder: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
+  glassHighlight: transformColor('rgb(100, 200, 255)', { opacity: 0.08 }),
 
   // Holo background/border opacities (avoids scattered rgba literals)
-  holoBg03: transformColor('rgba(100, 200, 255, 0.03)'),
-  holoBg05: transformColor('rgba(100, 200, 255, 0.05)'),
-  holoBg10: transformColor('rgba(100, 200, 255, 0.1)'),
-  holoBorder06: transformColor('rgba(100, 200, 255, 0.06)'),
-  holoBorder08: transformColor('rgba(100, 200, 255, 0.08)'),
-  holoBorder10: transformColor('rgba(100, 200, 255, 0.1)'),
-  holoBorder12: transformColor('rgba(100, 200, 255, 0.12)'),
+  holoBg03: transformColor('rgb(100, 200, 255)', { opacity: 0.03 }),
+  holoBg05: transformColor('rgb(100, 200, 255)', { opacity: 0.05 }),
+  holoBg10: transformColor('rgb(100, 200, 255)', { opacity: 0.1 }),
+  holoBorder06: transformColor('rgb(100, 200, 255)', { opacity: 0.06 }),
+  holoBorder08: transformColor('rgb(100, 200, 255)', { opacity: 0.08 }),
+  holoBorder10: transformColor('rgb(100, 200, 255)', { opacity: 0.1 }),
+  holoBorder12: transformColor('rgb(100, 200, 255)', { opacity: 0.12 }),
 
   // Panel chrome
-  panelBg: transformColor('rgba(8, 12, 24, 0.85)'),
-  panelSeparator: transformColor('rgba(100, 200, 255, 0.04)'),
+  panelBg: transformColor('rgb(8, 12, 24)', { opacity: 0.85 }),
+  panelSeparator: transformColor('rgb(100, 200, 255)', { opacity: 0.04 }),
 
   // Toggle button states
-  toggleActive: transformColor('rgba(100, 200, 255, 0.15)'),
-  toggleInactive: transformColor('rgba(100, 200, 255, 0.05)'),
-  toggleBorder: transformColor('rgba(100, 200, 255, 0.1)'),
+  toggleActive: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
+  toggleInactive: transformColor('rgb(100, 200, 255)', { opacity: 0.05 }),
+  toggleBorder: transformColor('rgb(100, 200, 255)', { opacity: 0.1 }),
 
   // Live indicator
   liveDot: transformColor('#ff4444'),
   liveText: transformColor('#ff6666'),
-  liveResumeBg: transformColor('rgba(255, 68, 68, 0.15)'),
-  liveResumeBorder: transformColor('rgba(255, 68, 68, 0.35)'),
+  liveResumeBg: transformColor('rgb(255, 68, 68)', { opacity: 0.15 }),
+  liveResumeBorder: transformColor('rgb(255, 68, 68)', { opacity: 0.35 }),
 
   // Discovery type colors
   discoveryFile: transformColor('#66ccff'),
@@ -307,43 +314,43 @@ export const LIGHT_COLORS = {
   discoveryCode: transformColor('#ffbb44'),
 
   // Session tab states
-  tabSelectedBg: transformColor('rgba(100, 200, 255, 0.15)'),
-  tabInactiveBg: transformColor('rgba(100, 200, 255, 0.03)'),
-  tabSelectedBorder: transformColor('rgba(100, 200, 255, 0.3)'),
-  tabInactiveBorder: transformColor('rgba(100, 200, 255, 0.08)'),
+  tabSelectedBg: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
+  tabInactiveBg: transformColor('rgb(100, 200, 255)', { opacity: 0.03 }),
+  tabSelectedBorder: transformColor('rgb(100, 200, 255)', { opacity: 0.3 }),
+  tabInactiveBorder: transformColor('rgb(100, 200, 255)', { opacity: 0.08 }),
   tabClose: transformColor('#ff6688'),
 
   // Role colors (message bubbles)
-  roleAssistantBg: transformColor('rgba(80, 160, 220, 0.12)'),
-  roleAssistantBgSelected: transformColor('rgba(80, 160, 220, 0.2)'),
+  roleAssistantBg: transformColor('rgb(80, 160, 220)', { opacity: 0.12 }),
+  roleAssistantBgSelected: transformColor('rgb(80, 160, 220)', { opacity: 0.2 }),
   roleAssistantText: transformColor('#a0d4f0'),
-  roleThinkingBg: transformColor('rgba(140, 100, 200, 0.12)'),
-  roleThinkingBgSelected: transformColor('rgba(140, 100, 200, 0.2)'),
+  roleThinkingBg: transformColor('rgb(140, 100, 200)', { opacity: 0.12 }),
+  roleThinkingBgSelected: transformColor('rgb(140, 100, 200)', { opacity: 0.2 }),
   roleThinkingText: transformColor('#c0a0e0'),
-  roleUserBg: transformColor('rgba(200, 160, 80, 0.12)'),
-  roleUserBgSelected: transformColor('rgba(200, 160, 80, 0.2)'),
+  roleUserBg: transformColor('rgb(200, 160, 80)', { opacity: 0.12 }),
+  roleUserBgSelected: transformColor('rgb(200, 160, 80)', { opacity: 0.2 }),
   roleUserText: transformColor('#e0c888'),
 
   // Result/success
-  resultBg: transformColor('rgba(102, 255, 170, 0.05)'),
-  resultBorder: transformColor('rgba(102, 255, 170, 0.1)'),
+  resultBg: transformColor('rgb(102, 255, 170)', { opacity: 0.05 }),
+  resultBorder: transformColor('rgb(102, 255, 170)', { opacity: 0.1 }),
 
   // Unread indicator
   unreadDot: transformColor('#ff6666'),
 
   // Play button
-  playBtnBg: transformColor('rgba(102, 204, 255, 0.12)'),
-  playBtnActiveBg: transformColor('rgba(102, 204, 255, 0.2)'),
-  playBtnBorder: transformColor('rgba(102, 204, 255, 0.4)'),
-  playBtnGlow: `0 0 12px ${transformColor('rgba(102, 204, 255, 0.15)')}`,
+  playBtnBg: transformColor('rgb(102, 204, 255)', { opacity: 0.12 }),
+  playBtnActiveBg: transformColor('rgb(102, 204, 255)', { opacity: 0.2 }),
+  playBtnBorder: transformColor('rgb(102, 204, 255)', { opacity: 0.4 }),
+  playBtnGlow: `0 0 12px ${transformColor('rgb(102, 204, 255)', { opacity: 0.15 })}`,
 
   // Scrubber
-  scrubberFill: `linear-gradient(90deg, ${transformColor('rgba(102,204,255,0.3)')}, ${transformColor('rgba(102,204,255,0.6)')})`,
-  scrubberHeadGlow: `0 0 10px ${transformColor('rgba(102, 204, 255, 0.6)')}, 0 0 20px ${transformColor('rgba(102, 204, 255, 0.2)')}`,
-  reviewBtnBorder: transformColor('rgba(102, 204, 255, 0.25)'),
+  scrubberFill: `linear-gradient(90deg, ${transformColor('rgb(102, 204, 255)', { opacity: 0.3 })}, ${transformColor('rgb(102, 204, 255)', { opacity: 0.6 })})`,
+  scrubberHeadGlow: `0 0 10px ${transformColor('rgb(102, 204, 255)', { opacity: 0.6 })}, 0 0 20px ${transformColor('rgb(102, 204, 255)', { opacity: 0.2 })}`,
+  reviewBtnBorder: transformColor('rgb(102, 204, 255)', { opacity: 0.25 }),
 
   // Cost overlay
-  costActiveBg: transformColor('rgba(102, 255, 170, 0.15)'),
+  costActiveBg: transformColor('rgb(102, 255, 170)', { opacity: 0.15 }),
 
   // Canvas drawing — bubble base colors
   bubbleThinking: transformColor('rgb(140, 100, 200)'),
@@ -356,90 +363,90 @@ export const LIGHT_COLORS = {
   toolCard: transformColor('rgb(10, 15, 30)'),
 
   // Canvas drawing — agent/tool card backgrounds
-  cardBgDark: transformColor('rgba(5, 5, 16, 0.8)'),
-  cardBg: transformColor('rgba(10, 15, 30, 0.6)'),
-  cardBgSelected: transformColor('rgba(10, 15, 30, 0.8)'),
-  cardBgError: transformColor('rgba(40, 10, 15, 0.8)'),
-  cardBgSelectedHolo: transformColor('rgba(100, 200, 255, 0.15)'),
-  cardBgFaintOverlay: transformColor('rgba(0, 0, 0, 0.01)'),
+  cardBgDark: transformColor('rgb(5, 5, 16)', { opacity: 0.8 }),
+  cardBg: transformColor('rgb(10, 15, 30)', { opacity: 0.6 }),
+  cardBgSelected: transformColor('rgb(10, 15, 30)', { opacity: 0.8 }),
+  cardBgError: transformColor('rgb(40, 10, 15)', { opacity: 0.8 }),
+  cardBgSelectedHolo: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
+  cardBgFaintOverlay: transformColor('rgb(0, 0, 0)', { opacity: 0.01 }),
 
   // Active tool indicator (detail card)
-  toolIndicatorBg: transformColor('rgba(255, 187, 68, 0.1)'),
-  toolIndicatorBorder: transformColor('rgba(255, 187, 68, 0.2)'),
+  toolIndicatorBg: transformColor('rgb(255, 187, 68)', { opacity: 0.1 }),
+  toolIndicatorBorder: transformColor('rgb(255, 187, 68)', { opacity: 0.2 }),
   toolIndicatorText: transformColor('#ffbb44'),
 
   // Canvas drawing — cost labels
   costText: transformColor('#66ffaa'),
-  costTextDim: transformColor('#66ffaa80'),
-  costPillBg: transformColor('rgba(10, 20, 40, 0.75)'),
-  costPillStroke: transformColor('rgba(102, 255, 170, 0.3)'),
+  costTextDim: transformColor('#66ffaa', { opacity: 0.5 }),
+  costPillBg: transformColor('rgb(10, 20, 40)', { opacity: 0.75 }),
+  costPillStroke: transformColor('rgb(102, 255, 170)', { opacity: 0.3 }),
 
   // Canvas drawing — cost panel bar fills
-  barFillMain: transformColor('rgba(102, 204, 255, 0.15)'),
-  barFillSub: transformColor('rgba(204, 136, 255, 0.15)'),
+  barFillMain: transformColor('rgb(102, 204, 255)', { opacity: 0.15 }),
+  barFillSub: transformColor('rgb(204, 136, 255)', { opacity: 0.15 }),
 
   // ─── Transcript / message feed colors ───────────────────────────────────────
 
   // User messages
-  userMsgBg: transformColor('rgba(255, 187, 68, 0.06)'),
-  userMsgBorder: transformColor('rgba(255, 187, 68, 0.12)'),
-  userLabel: transformColor('#ffbb4490'),
+  userMsgBg: transformColor('rgb(255, 187, 68)', { opacity: 0.06 }),
+  userMsgBorder: transformColor('rgb(255, 187, 68)', { opacity: 0.12 }),
+  userLabel: transformColor('#ffbb44', { opacity: 0.56 }),
   userText: transformColor('#ffcc66'),
 
   // Assistant messages
-  assistantLabel: transformColor('#66ccff80'),
+  assistantLabel: transformColor('#66ccff', { opacity: 0.5 }),
   assistantText: transformColor('#aaeeff'),
 
   // Thinking messages
-  thinkingBgExpanded: transformColor('rgba(180, 140, 255, 0.06)'),
-  thinkingBgCollapsed: transformColor('rgba(180, 140, 255, 0.03)'),
-  thinkingBorder: transformColor('rgba(180, 140, 255, 0.08)'),
-  thinkingLabel: transformColor('#bb99ff70'),
-  thinkingArrow: transformColor('#bb99ff55'),
+  thinkingBgExpanded: transformColor('rgb(180, 140, 255)', { opacity: 0.06 }),
+  thinkingBgCollapsed: transformColor('rgb(180, 140, 255)', { opacity: 0.03 }),
+  thinkingBorder: transformColor('rgb(180, 140, 255)', { opacity: 0.08 }),
+  thinkingLabel: transformColor('#bb99ff', { opacity: 0.44 }),
+  thinkingArrow: transformColor('#bb99ff', { opacity: 0.33 }),
   thinkingPreview: transformColor('#bb99ff'),
-  thinkingTextExpanded: transformColor('#bb99ff80'),
-  thinkingBorderLeft: transformColor('rgba(180, 140, 255, 0.15)'),
+  thinkingTextExpanded: transformColor('#bb99ff', { opacity: 0.5 }),
+  thinkingBorderLeft: transformColor('rgb(180, 140, 255)', { opacity: 0.15 }),
 
   // Tool call messages
-  toolCallBg: transformColor('rgba(255, 187, 68, 0.05)'),
-  toolCallBorder: transformColor('rgba(255, 187, 68, 0.1)'),
+  toolCallBg: transformColor('rgb(255, 187, 68)', { opacity: 0.05 }),
+  toolCallBorder: transformColor('rgb(255, 187, 68)', { opacity: 0.1 }),
 
   // Tool result messages
-  bashResultBg: transformColor('rgba(0,0,0,0.25)'),
-  toolResultBg: transformColor('rgba(102, 255, 170, 0.04)'),
-  bashResultBorder: transformColor('rgba(255, 187, 68, 0.1)'),
-  toolResultBorder: transformColor('rgba(102, 255, 170, 0.08)'),
-  bashResultText: transformColor('#aaeeff80'),
-  toolResultText: transformColor('#66ffaa80'),
-  textFaint: transformColor('#aaeeff60'),
+  bashResultBg: transformColor('rgb(0, 0, 0)', { opacity: 0.25 }),
+  toolResultBg: transformColor('rgb(102, 255, 170)', { opacity: 0.04 }),
+  bashResultBorder: transformColor('rgb(255, 187, 68)', { opacity: 0.1 }),
+  toolResultBorder: transformColor('rgb(102, 255, 170)', { opacity: 0.08 }),
+  bashResultText: transformColor('#aaeeff', { opacity: 0.5 }),
+  toolResultText: transformColor('#66ffaa', { opacity: 0.5 }),
+  textFaint: transformColor('#aaeeff', { opacity: 0.38 }),
 
   // Search highlight
-  searchHighlightBg: transformColor('rgba(255,187,68,0.3)'),
+  searchHighlightBg: transformColor('rgb(255, 187, 68)', { opacity: 0.3 }),
 
   // ─── Diff / code block colors ───────────────────────────────────────────────
 
-  codeBlockBg: transformColor('rgba(0,0,0,0.3)'),
+  codeBlockBg: transformColor('rgb(0, 0, 0)', { opacity: 0.3 }),
   diffRemoved: transformColor('#ff6666'),
-  diffRemovedBg: transformColor('rgba(255,80,80,0.08)'),
+  diffRemovedBg: transformColor('rgb(255, 80, 80)', { opacity: 0.08 }),
   diffAdded: transformColor('#66ff88'),
-  diffAddedBg: transformColor('rgba(80,255,120,0.08)'),
+  diffAddedBg: transformColor('rgb(80, 255, 120)', { opacity: 0.08 }),
 
   // ─── Tool content colors ────────────────────────────────────────────────────
 
   filePathActive: transformColor('#66ccff'),
-  filePathInactive: transformColor('#66ccff90'),
+  filePathInactive: transformColor('#66ccff', { opacity: 0.56 }),
   todoCompleted: transformColor('#66ffaa'),
-  todoCompletedText: transformColor('#66ffaa90'),
-  todoPending: transformColor('#66ccff60'),
-  contentDim: transformColor('#aaeeff90'),
-  searchIcon: transformColor('#66ccff60'),
+  todoCompletedText: transformColor('#66ffaa', { opacity: 0.56 }),
+  todoPending: transformColor('#66ccff', { opacity: 0.38 }),
+  contentDim: transformColor('#aaeeff', { opacity: 0.56 }),
+  searchIcon: transformColor('#66ccff', { opacity: 0.38 }),
 
   // ─── Panel header / chrome text ─────────────────────────────────────────────
 
-  panelLabel: transformColor('#66ccff90'),
-  panelLabelDim: transformColor('#66ccff65'),
+  panelLabel: transformColor('#66ccff', { opacity: 0.56 }),
+  panelLabelDim: transformColor('#66ccff', { opacity: 0.4 }),
   scrollBtnText: transformColor('#66ccff'),
-  scrollbarThumb: transformColor('rgba(100,200,255,0.15)'),
+  scrollbarThumb: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
 }
 
 /** Backward-compat alias — existing code importing COLORS gets dark palette. */
