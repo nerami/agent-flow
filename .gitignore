@@ -6,6 +6,7 @@ dist
 *.vsix
 
 # Auto-generated
+web/storybook-static/
 extension/README.md
 scripts/.dev-relay.js
 scripts/.dev-relay.js.map
