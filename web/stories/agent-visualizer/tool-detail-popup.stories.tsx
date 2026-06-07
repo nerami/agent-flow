@@ -26,7 +26,7 @@ export const Complete: Story = {
 
 export const ErrorState: Story = {
   args: {
-    tool: { id: 'tc-3', toolName: 'Edit', state: 'error', args: 'missing.ts', errorMessage: 'File not found' },
+    tool: { id: 'tc-3', toolName: 'Edit', state: 'error', args: 'missing.ts' },
     position: { x: 200, y: 200 },
     onClose: () => {},
   },
