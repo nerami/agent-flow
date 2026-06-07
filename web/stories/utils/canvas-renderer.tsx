@@ -9,6 +9,8 @@ export interface CanvasRendererProps {
   background?: string
   /** When true, runs a requestAnimationFrame loop and passes elapsed seconds as time. */
   animate?: boolean
+  /** Scale factor applied around the canvas center (e.g. 2 = 2x zoom). */
+  zoom?: number
   draw: (ctx: CanvasRenderingContext2D, colors: ColorPalette, time: number) => void
 }
 
@@ -17,6 +19,7 @@ export function CanvasRenderer({
   height = 600,
   background,
   animate = false,
+  zoom = 1,
   draw,
 }: CanvasRendererProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -27,6 +30,16 @@ export function CanvasRenderer({
   drawRef.current = draw
   const startRef = useRef(0)
   const rafRef = useRef(0)
+  const zoomRef = useRef(zoom)
+  zoomRef.current = zoom
+
+  const applyZoom = (ctx: CanvasRenderingContext2D) => {
+    const z = zoomRef.current
+    if (z === 1) return
+    ctx.translate(width / 2, height / 2)
+    ctx.scale(z, z)
+    ctx.translate(-width / 2, -height / 2)
+  }
 
   // Start/restart rAF loop when animate/dimensions change.
   useEffect(() => {
@@ -43,7 +56,10 @@ export function CanvasRenderer({
         ctx.clearRect(0, 0, width, height)
         ctx.fillStyle = bg
         ctx.fillRect(0, 0, width, height)
+        ctx.save()
+        applyZoom(ctx)
         drawRef.current(ctx, colorsRef.current, t)
+        ctx.restore()
         rafRef.current = requestAnimationFrame(loop)
       }
       rafRef.current = requestAnimationFrame(loop)
@@ -62,8 +78,11 @@ export function CanvasRenderer({
     ctx.clearRect(0, 0, width, height)
     ctx.fillStyle = bg
     ctx.fillRect(0, 0, width, height)
+    ctx.save()
+    applyZoom(ctx)
     drawRef.current(ctx, colors, 0)
-  }, [colors, animate, width, height, background])
+    ctx.restore()
+  }, [colors, animate, width, height, background, zoom])
 
   return (
     <canvas
