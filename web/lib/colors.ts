@@ -225,12 +225,14 @@ const COLOR_RE = /#[0-9a-fA-F]{3,8}|rgba?\([^)]+\)/g
 
 export interface TransformColorOptions {
   opacity?: number
+  invert?: boolean
 }
 
 export function transformColor(color: string, options?: TransformColorOptions): string {
   let c = colord(color)
   if (c.isValid()) {
     if (options?.opacity !== undefined) c = c.alpha(options.opacity)
+    if (options?.invert) c = c.invert()
     return c.toRgbString()
   }
   
