@@ -37,4 +37,8 @@ const withTheme = (Story: () => ReactElement, context: { globals: Record<string,
   )
 }
 
+export const parameters = {
+  layout: 'fullscreen',
+}
+
 export const decorators = [withTheme]
