@@ -49,7 +49,7 @@ export const ToolEdge: Story = {
         animate
         draw={(ctx, colors, t) => {
           drawAgents(ctx, MULTI_AGENT_MAP, null, null, false, t, colors)
-          drawEdges(ctx, edges, MULTI_AGENT_MAP, TOOL_CALL_MAP, new Set(['tc-1']), t, colors)
+          drawEdges(ctx, edges, MULTI_AGENT_MAP, TOOL_CALL_MAP, new Set([`${AGENT_2_ID}->tc-1`]), t, colors)
         }}
       />
     )
