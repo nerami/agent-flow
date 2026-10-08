@@ -177,6 +177,9 @@ export class HookServer implements vscode.Disposable {
       case 'SessionEnd':
         this.handleSessionEnd(payload)
         break
+      case 'PermissionRequest':
+        this.handlePermissionRequest(payload)
+        break
     }
   }
 
@@ -291,6 +294,18 @@ export class HookServer implements vscode.Disposable {
   private handleNotification(payload: HookPayload): void {
     if (payload.notification_type !== 'permission_prompt') return
 
+    this.emit({
+      time: this.elapsedSeconds(payload.session_id),
+      type: 'permission_requested',
+      payload: {
+        agent: ORCHESTRATOR_NAME,
+        message: payload.message || 'Permission needed',
+        title: payload.title || 'Permission needed',
+      },
+    }, payload.session_id)
+  }
+
+  private handlePermissionRequest(payload: HookPayload): void {
     this.emit({
       time: this.elapsedSeconds(payload.session_id),
       type: 'permission_requested',

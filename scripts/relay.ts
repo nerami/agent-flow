@@ -371,6 +371,25 @@ function resolveRuntimeMode(explicit?: RelayRuntimeMode): RelayRuntimeMode {
   return raw === 'claude' || raw === 'codex' ? raw : 'auto'
 }
 
+/** Detect the cmux terminal (https://cmux.sh). When cmux's Claude hook
+ *  injection is enabled (CMUX_CLAUDE_HOOKS_DISABLED unset), its wrapper adds a
+ *  synchronous PermissionRequest hook with a 125s timeout — Claude Code stalls
+ *  on every permission prompt and the visualizer appears frozen until the user
+ *  responds. Warn so users know why, and how to opt out. */
+function warnIfCmuxHookInjection(): void {
+  const inCmux = !!(process.env.CMUX_BUNDLE_ID || process.env.CMUX_SOCKET_PATH)
+  if (!inCmux) return
+  log('[relay] cmux terminal detected')
+  if (process.env.CMUX_CLAUDE_HOOKS_DISABLED !== '1') {
+    console.warn(
+      '[agent-flow] cmux hook injection is active. Claude Code pauses on every\n' +
+      '  permission prompt (cmux PermissionRequest hook, up to 125s), so the\n' +
+      '  visualizer will appear frozen during tool approvals. To opt out, set\n' +
+      '  CMUX_CLAUDE_HOOKS_DISABLED=1 before launching claude.',
+    )
+  }
+}
+
 export async function createRelay(options: RelayOptions): Promise<Relay> {
   const { workspace } = options
   verbose = options.verbose ?? false
@@ -384,6 +403,8 @@ export async function createRelay(options: RelayOptions): Promise<Relay> {
   const wantClaude = mode === 'claude' || mode === 'auto'
   const wantCodex = mode === 'codex' || mode === 'auto'
   log(`[relay] Runtime mode: ${mode} (watching: ${[wantClaude && 'claude', wantCodex && 'codex'].filter(Boolean).join(', ')})`)
+
+  if (wantClaude) warnIfCmuxHookInjection()
 
   let hookServer: HookServer | null = null
   let scanInterval: NodeJS.Timeout | null = null

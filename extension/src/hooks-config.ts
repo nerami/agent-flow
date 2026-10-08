@@ -88,6 +88,7 @@ export async function configureClaudeHooks(): Promise<void> {
     Notification: [hookEntry],
     Stop: [hookEntry],
     SessionEnd: [hookEntry],
+    PermissionRequest: [hookEntry],
   }
 
   // Read existing settings
