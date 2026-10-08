@@ -5,7 +5,7 @@ export default function Page() {
   return (
     <>
       <AgentVisualizer />
-      {process.env.NODE_ENV === 'development' && <ThemeColorEditor />}
+      {/* {process.env.NODE_ENV === 'development' && <ThemeColorEditor />} */}
     </>
   )
 }

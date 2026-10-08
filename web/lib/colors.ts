@@ -244,8 +244,8 @@ export function transformColor(color: string, options?: TransformColorOptions): 
 
 export const LIGHT_COLORS = {
   // Background
-  void: transformColor('#050510'),
-  hexGrid: transformColor('#0d0d1f'),
+  void: colord('#050510').lighten(0.94).toHex(),
+  hexGrid: colord('#0d0d1f').lighten(0.74).toHex(),
 
   // Primary Hologram
   holoBase: transformColor('#66ccff'),
@@ -275,10 +275,10 @@ export const LIGHT_COLORS = {
   contextSubagent: transformColor('#66ffaa'),
 
   // UI Chrome
-  nodeInterior: transformColor('rgb(10, 15, 40)', { opacity: 0.5 }),
+  nodeInterior: colord('rgb(10, 15, 40)').lighten(0.75).alpha(0.5).toRgbString(),
   textPrimary: transformColor('#aaeeff'),
-  textDim: transformColor('#66ccff', { opacity: 0.56 }),
-  textMuted: transformColor('#66ccff', { opacity: 0.31 }),
+  textDim: colord('#66ccff').darken(0.4).alpha(0.56).toRgbString(),
+  textMuted: colord('#66ccff').darken(0.4).alpha(0.31).toRgbString(),
 
   // Glass card
   glassBg: transformColor('rgb(10, 15, 30)', { opacity: 0.7 }),
@@ -365,12 +365,12 @@ export const LIGHT_COLORS = {
   toolCard: transformColor('rgb(10, 15, 30)'),
 
   // Canvas drawing — agent/tool card backgrounds
-  cardBgDark: transformColor('rgb(5, 5, 16)', { opacity: 0.8 }),
+  cardBgDark: colord('rgb(5, 5, 16)').lighten(0.9).alpha(0.8).toRgbString(),
   cardBg: transformColor('rgb(10, 15, 30)', { opacity: 0.6 }),
   cardBgSelected: transformColor('rgb(10, 15, 30)', { opacity: 0.8 }),
   cardBgError: transformColor('rgb(40, 10, 15)', { opacity: 0.8 }),
   cardBgSelectedHolo: transformColor('rgb(100, 200, 255)', { opacity: 0.15 }),
-  cardBgFaintOverlay: transformColor('rgb(0, 0, 0)', { opacity: 0.01 }),
+  cardBgFaintOverlay: colord('rgb(0, 0, 0)').alpha(0.01).toRgbString(),
 
   // Active tool indicator (detail card)
   toolIndicatorBg: transformColor('rgb(255, 187, 68)', { opacity: 0.1 }),

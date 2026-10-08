@@ -290,7 +290,7 @@ export function AgentCanvas({
       ctx.restore()
 
       if (showCostOverlay) drawCostSummaryPanel(ctx, agents, toolCalls, colors)
-      if (bloomRef.current) bloomRef.current.apply(canvas, ctx)
+      // if (bloomRef.current) bloomRef.current.apply(canvas, ctx)
 
       // ─── Performance overlay (enabled via ?perf or ?stress) ──────────
       if (PERF_OVERLAY_ENABLED) {
